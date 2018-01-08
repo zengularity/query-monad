@@ -5,7 +5,7 @@ import cats.{Applicative, Functor, Monad}
 /**
   * @param F the structure we add to our stack
   */
-case class ReaderT[F[_], -A, +B](f: A => F[B]) {
+case class ReaderT[F[_], A, B](f: A => F[B]) {
   def map[C](g: B => C)(implicit F: Functor[F]): ReaderT[F, A, C] =
     ReaderT(a => F.map(f(a))(g))
 
@@ -15,8 +15,8 @@ case class ReaderT[F[_], -A, +B](f: A => F[B]) {
 }
 
 object ReaderT {
-  def pure[F[_], C, A](a: A)(implicit F: Applicative[F]): ReaderT[F, C, A] =
-    ReaderT(_ => F.pure(a))
+  def pure[F[_], A, B](b: B)(implicit F: Applicative[F]): ReaderT[F, A, B] =
+    ReaderT(_ => F.pure(b))
 
   def ask[F[_], A](implicit F: Applicative[F]): ReaderT[F, A, A] =
     ReaderT(a => F.pure(a))
