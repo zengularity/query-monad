@@ -35,11 +35,6 @@ class AppComponents(context: Context)
       }
 
     case GET(p"/sqrt/${double(num)}") => Action.async {
-      /*
-       Use Action.async to return a Future result (sqrt can be intense :P)
-       Note the use of double(num) to bind only numbers (built-in :)
-       */
-
       val query = Query(implicit c =>
         SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
 
