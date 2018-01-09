@@ -1,6 +1,6 @@
 package wiring
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 import anorm._
 
@@ -20,7 +20,8 @@ class AppComponents(context: Context)
     with NoHttpFiltersComponents {
 
   val db = dbApi.database("default")
-  val queryRunner = QueryRunner(db, ExecutionContext.Implicits.global)
+
+  def queryRunner(implicit ec: ExecutionContext) = QueryRunner(db, ec)
 
   val router: Router = Router.from {
 
@@ -33,19 +34,13 @@ class AppComponents(context: Context)
         }
       }
 
-    /*
-     Use Action.async to return a Future result (sqrt can be intense :P)
-     Note the use of double(num) to bind only numbers (built-in :)
-     */
-    case GET(p"/sqrt/${double(num)}") =>
-      Action.async {
-        val query = Query(implicit c =>
-          SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
-        queryRunner.run(query).map(r => Ok(r.toString))
-      }
+    case GET(p"/sqrt/${double(num)}") => Action.async {
+      val query = Query(implicit c =>
+        SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
 
+      queryRunner.run(query).map(r => Ok(r.toString))
+    }
   }
-
 }
 
 class AppLoader extends ApplicationLoader {
