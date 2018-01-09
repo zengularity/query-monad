@@ -1,23 +1,36 @@
 package wiring
 
+import scala.concurrent.{ExecutionContext, Future}
+
+import anorm._
+
 import play.api.ApplicationLoader.Context
 import play.api._
+import play.api.db.{DBComponents, HikariCPComponents}
 import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import scala.concurrent.Future
+import database.{Query, QueryRunner}
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
+    with DBComponents
+    with HikariCPComponents
     with NoHttpFiltersComponents {
+
+  val db = dbApi.database("default")
+  val queryRunner = QueryRunner(db, ExecutionContext.Implicits.global)
 
   val router: Router = Router.from {
 
     // Essentially copied verbatim from the SIRD example
     case GET(p"/hello/$to") =>
-      Action {
-        Ok(s"Hello $to")
+      Action.async {
+        val query = Query.pure(to)
+        queryRunner.run(query).map { to =>
+          Ok(s"Hello $to")
+        }
       }
 
     /*
@@ -26,9 +39,9 @@ class AppComponents(context: Context)
      */
     case GET(p"/sqrt/${double(num)}") =>
       Action.async {
-        Future {
-          Ok(Math.sqrt(num).toString)
-        }
+        val query = Query(implicit c =>
+          SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
+        queryRunner.run(query).map(r => Ok(r.toString))
       }
 
   }

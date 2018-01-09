@@ -7,14 +7,11 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 scalaVersion := "2.12.4"
 
 libraryDependencies ++= Seq(
-  ws,
   jdbc,
-  "com.typesafe.play" %% "anorm" % "2.5.3",
+  "org.playframework.anorm" %% "anorm" % "2.6.0",
   "org.typelevel" %% "cats-core" % "1.0.1",
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.1" % Test
 )
-
-addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")
 
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
