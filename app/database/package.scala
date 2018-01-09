@@ -1,9 +1,10 @@
+import scala.language.higherKinds
+
+import java.sql.Connection
+
+import utils.{Reader, ReaderT}
+
 package object database {
-
-  import java.sql.Connection
-
-  import utils.{Reader, ReaderT}
-
   type Query[A] = Reader[Connection, A]
 
   object Query {

@@ -1,5 +1,7 @@
 package utils
 
+import scala.language.higherKinds
+
 import cats.{Applicative, Functor, Monad}
 
 /**
