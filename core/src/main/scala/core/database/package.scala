@@ -1,6 +1,8 @@
-import scala.language.higherKinds
+package core
 
 import java.sql.Connection
+
+import scala.language.higherKinds
 
 import utils.{Reader, ReaderT}
 

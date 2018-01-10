@@ -1,4 +1,4 @@
-package wiring
+package examples.wiring
 
 import scala.concurrent.ExecutionContext
 
@@ -11,7 +11,7 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import database.{Query, QueryRunner}
+import core.database.{Query, QueryRunner}
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
