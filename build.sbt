@@ -67,7 +67,6 @@ lazy val core = (project in file("core"))
       jdbc,
       Dependencies.anorm,
       Dependencies.cats,
-      Dependencies.play,
       Dependencies.scalaTestPlusPlay
     )
   )
