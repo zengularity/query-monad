@@ -51,5 +51,6 @@ scalacOptions in (Test, compile) ~= (_.filterNot(
   )))
 
 scalafmtOnCompile := true
+scalafmtConfig := file("project/scalafmt.conf")
 
 wartremoverErrors in (Compile, compile) ++= Warts.unsafe
