@@ -1,29 +1,22 @@
 package com.zengularity.querymonad.core.database
 
-import javax.sql.DataSource
-
 import scala.concurrent.{ExecutionContext, Future}
 
-class QueryRunner(
-    db: Database,
-    ec: ExecutionContext
-) {
-  def run[A](query: Query[A]): Future[A] =
-    Future {
-      db.withConnection(query.run)
-    }(ec)
-
-  // TODO: Remove with a transaction run at context level
-  def commit[A](query: Query[A]): Future[A] =
-    Future {
-      db.withTransaction(query.run)
-    }(ec)
+/**
+  * A class who can run a Query.
+  */
+sealed trait QueryRunner {
+  def apply[T](query: Query[T]): Future[T]
 }
 
 object QueryRunner {
-  def apply(db: Database, ec: ExecutionContext) =
-    new QueryRunner(db, ec)
+  private class DefaultRunner(wc: WithConnection)(implicit ec: ExecutionContext)
+      extends QueryRunner {
+    def apply[T](query: Query[T]): Future[T] =
+      Future(wc(query.run))
+  }
 
-  def apply(ds: DataSource, ec: ExecutionContext) =
-    new QueryRunner(Database(ds), ec)
+  // Default factory
+  def apply(wc: WithConnection)(implicit ec: ExecutionContext): QueryRunner =
+    new DefaultRunner(wc)
 }
