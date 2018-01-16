@@ -34,12 +34,13 @@ class AppComponents(context: Context)
         }
       }
 
-    case GET(p"/sqrt/${double(num)}") => Action.async {
-      val query = Query(implicit c =>
-        SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
+    case GET(p"/sqrt/${double(num)}") =>
+      Action.async {
+        val query = Query(implicit c =>
+          SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
 
-      queryRunner.run(query).map(r => Ok(r.toString))
-    }
+        queryRunner.run(query).map(r => Ok(r.toString))
+      }
   }
 }
 
