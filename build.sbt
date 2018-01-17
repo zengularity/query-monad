@@ -78,6 +78,7 @@ lazy val sampleAppExample = (project in file("examples/sample-app"))
       )),
     name := "sample-app-example",
     libraryDependencies ++= Seq(
+      jdbc,
       Dependencies.anorm,
       Dependencies.h2,
       Dependencies.scalaTestPlusPlay
