@@ -6,11 +6,11 @@ import javax.sql.DataSource
 import scala.util.control.ControlThrowable
 
 /**
- * This class is copy from Play DefaultDatabase class.
- * See https://github.com/playframework/playframework/blob/master/framework/src/play-jdbc/src/main/scala/play/api/db/Databases.scala#L94
- *
- * @dataSource managed dataSource used to obtain connection.
- */
+  * This class is copy from Play DefaultDatabase class.
+  * See https://github.com/playframework/playframework/blob/master/framework/src/play-jdbc/src/main/scala/play/api/db/Databases.scala#L94
+  *
+  * @dataSource managed dataSource used to obtain connection.
+  */
 class Database(dataSource: DataSource) {
 
   def getConnection(autocommit: Boolean): Connection = {

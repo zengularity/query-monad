@@ -5,8 +5,8 @@ import javax.sql.DataSource
 import scala.concurrent.{ExecutionContext, Future}
 
 class QueryRunner(
-  db: Database,
-  ec: ExecutionContext
+    db: Database,
+    ec: ExecutionContext
 ) {
   def run[A](query: Query[A]): Future[A] =
     Future {
