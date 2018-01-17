@@ -1,12 +1,12 @@
 package core.database
 
+import javax.sql.DataSource
+
 import scala.concurrent.{ExecutionContext, Future}
 
-import play.api.db.Database
-
-class QueryRunner[DB <: Database](
-    db: Database,
-    ec: ExecutionContext
+class QueryRunner(
+  db: Database,
+  ec: ExecutionContext
 ) {
   def run[A](query: Query[A]): Future[A] =
     Future {
@@ -21,6 +21,9 @@ class QueryRunner[DB <: Database](
 }
 
 object QueryRunner {
-  def apply[DB <: Database](db: Database, ec: ExecutionContext) =
+  def apply(db: Database, ec: ExecutionContext) =
     new QueryRunner(db, ec)
+
+  def apply(ds: DataSource, ec: ExecutionContext) =
+    new QueryRunner(Database(ds), ec)
 }

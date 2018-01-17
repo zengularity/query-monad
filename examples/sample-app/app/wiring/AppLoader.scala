@@ -3,7 +3,6 @@ package examples.wiring
 import scala.concurrent.ExecutionContext
 
 import anorm._
-
 import play.api.ApplicationLoader.Context
 import play.api._
 import play.api.db.{DBComponents, HikariCPComponents}
@@ -21,7 +20,7 @@ class AppComponents(context: Context)
 
   val db = dbApi.database("default")
 
-  def queryRunner(implicit ec: ExecutionContext) = QueryRunner(db, ec)
+  val queryRunner = QueryRunner(db.dataSource, implicitly[ExecutionContext])
 
   val router: Router = Router.from {
 

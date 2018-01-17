@@ -64,10 +64,7 @@ lazy val core = (project in file("core"))
       )),
     name := "query-core",
     libraryDependencies ++= Seq(
-      jdbc,
-      Dependencies.anorm,
-      Dependencies.cats,
-      Dependencies.scalaTestPlusPlay
+      Dependencies.cats
     )
   )
 
@@ -81,7 +78,9 @@ lazy val sampleAppExample = (project in file("examples/sample-app"))
       )),
     name := "sample-app-example",
     libraryDependencies ++= Seq(
-      Dependencies.h2
+      Dependencies.anorm,
+      Dependencies.h2,
+      Dependencies.scalaTestPlusPlay
     )
   )
   .dependsOn(core)
