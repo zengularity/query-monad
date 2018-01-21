@@ -14,8 +14,8 @@ This repo follows a standard fork and pull model for contributions via GitHub pu
 
 # Write Code
 
-We use [WartRemover](http://www.wartremover.org/doc/warts.html) for linting and [Scalafmt](http://scalameta.org/scalafmt/).
-TODO: add style guide
+We use [WartRemover](http://www.wartremover.org/doc/warts.html) for linting and [Scalafmt](http://scalameta.org/scalafmt/) for formatting.
+Please run `scalafmt`command before committing. CI will fail on any formatting issue.
 
 # Write Tests
 

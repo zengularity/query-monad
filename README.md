@@ -4,4 +4,4 @@ Project for the article **Functional database programming with Play Anorm throug
 
 # CONTRIBUTING
 
-Please take a look at the [Contribution guide](CONTRIBUTING.md)
+Please take a look at the [Contribution guide](.github/CONTRIBUTING.md)
