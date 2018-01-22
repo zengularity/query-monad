@@ -56,12 +56,8 @@ wartremoverErrors ++= Warts.unsafe
 // Projects definitions
 
 lazy val core = (project in file("core"))
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .settings(
-    inThisBuild(
-      List(
-        version := "1.0-SNAPSHOT"
-      )),
     name := "query-core",
     libraryDependencies ++= Seq(
       Dependencies.cats
@@ -70,12 +66,8 @@ lazy val core = (project in file("core"))
 
 lazy val sampleAppExample = (project in file("examples/sample-app"))
   .enablePlugins(PlayScala)
-  .settings(commonSettings: _*)
+  .settings(commonSettings)
   .settings(
-    inThisBuild(
-      List(
-        version := "1.0-SNAPSHOT"
-      )),
     name := "sample-app-example",
     libraryDependencies ++= Seq(
       jdbc,
