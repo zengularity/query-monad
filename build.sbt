@@ -8,7 +8,7 @@ scalaVersion := "2.12.4"
 
 // Common values
 val commonSettings = Seq(
-  organization := "io.zengularity",
+  organization := "com.zengularity",
   scalaVersion := "2.12.4",
   crossPaths := false,
   scalacOptions ++= Seq(
