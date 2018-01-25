@@ -1,4 +1,4 @@
-package core.database
+package com.zengularity.queryMonad.core.database
 
 import javax.sql.DataSource
 

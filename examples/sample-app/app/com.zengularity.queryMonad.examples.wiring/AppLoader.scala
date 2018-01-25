@@ -1,4 +1,4 @@
-package examples.wiring
+package com.zengularity.queryMonad.examples.wiring
 
 import scala.concurrent.ExecutionContext
 
@@ -10,7 +10,7 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import core.database.{Query, QueryRunner}
+import com.zengularity.queryMonad.core.database.{Query, QueryRunner}
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
