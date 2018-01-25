@@ -10,13 +10,13 @@ class QueryRunner(
 ) {
   def run[A](query: Query[A]): Future[A] =
     Future {
-      db.withConnection(query.f)
+      db.withConnection(query.run)
     }(ec)
 
   // TODO: Remove with a transaction run at context level
   def commit[A](query: Query[A]): Future[A] =
     Future {
-      db.withTransaction(query.f)
+      db.withTransaction(query.run)
     }(ec)
 }
 
