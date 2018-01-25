@@ -8,7 +8,7 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import com.zengularity.querymonad.core.database.{Query, QueryRunner}
+import com.zengularity.querymonad.core.module.sql.{SqlQuery, SqlQueryRunner}
 import com.zengularity.querymonad.examples.database.WithPlayTransaction
 
 class AppComponents(context: Context)
@@ -19,14 +19,14 @@ class AppComponents(context: Context)
 
   val db = dbApi.database("default")
 
-  val queryRunner = QueryRunner(new WithPlayTransaction(db))
+  val queryRunner = SqlQueryRunner(new WithPlayTransaction(db))
 
   val router: Router = Router.from {
 
     // Essentially copied verbatim from the SIRD example
     case GET(p"/hello/$to") =>
       Action.async {
-        val query = Query.pure(to)
+        val query = SqlQuery.pure(to)
         queryRunner(query).map { to =>
           Ok(s"Hello $to")
         }
@@ -34,7 +34,7 @@ class AppComponents(context: Context)
 
     case GET(p"/sqrt/${double(num)}") =>
       Action.async {
-        val query = Query(implicit c =>
+        val query = SqlQuery(implicit c =>
           SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
 
         queryRunner(query).map(r => Ok(r.toString))
@@ -44,8 +44,8 @@ class AppComponents(context: Context)
       Action.async {
         val query =
           for {
-            number <- Query.pure(42)
-            text <- Query(implicit c =>
+            number <- SqlQuery.pure(42)
+            text <- SqlQuery(implicit c =>
               SQL"select $cmd as result".as(SqlParser.str("result").single))
           } yield (text + number)
 
