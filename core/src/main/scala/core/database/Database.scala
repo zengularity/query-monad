@@ -1,4 +1,4 @@
-package com.zengularity.queryMonad.core.database
+package com.zengularity.querymonad.core.database
 
 import java.sql.Connection
 import javax.sql.DataSource
