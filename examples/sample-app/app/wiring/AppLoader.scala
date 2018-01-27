@@ -1,9 +1,8 @@
-package wiring
+package com.zengularity.querymonad.examples.wiring
 
 import scala.concurrent.ExecutionContext
 
 import anorm._
-
 import play.api.ApplicationLoader.Context
 import play.api._
 import play.api.db.{DBComponents, HikariCPComponents}
@@ -11,7 +10,7 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import database.{Query, QueryRunner}
+import com.zengularity.querymonad.core.database.{Query, QueryRunner}
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
@@ -21,7 +20,7 @@ class AppComponents(context: Context)
 
   val db = dbApi.database("default")
 
-  def queryRunner(implicit ec: ExecutionContext) = QueryRunner(db, ec)
+  val queryRunner = QueryRunner(db.dataSource, implicitly[ExecutionContext])
 
   val router: Router = Router.from {
 
