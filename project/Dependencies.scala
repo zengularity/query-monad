@@ -9,7 +9,5 @@ object Dependencies {
 
   lazy val h2 = "com.h2database" % "h2" % "1.4.196"
 
-  lazy val scalaTestPlusPlay = "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.1" % Test
-
   lazy val specs2 = "org.specs2" %% "specs2-core" % "4.0.2" % Test
 }
