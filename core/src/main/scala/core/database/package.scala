@@ -20,22 +20,22 @@ package object database {
 
   object QueryT {
     def apply[M[_], Resource, A](
-      run: Resource => M[A]
+        run: Resource => M[A]
     ): QueryT[M, Resource, A] =
       new QueryT(run)
 
     def pure[M[_]: Applicative, Resource, A](a: A) =
       ReaderT.pure[M, Resource, A](a)
 
-    def ask[M[_]: Applicative, Resource] = 
+    def ask[M[_]: Applicative, Resource] =
       ReaderT.ask[M, Resource]
 
-    def liftF[M[_], Resource, A](ma: M[A]) = 
+    def liftF[M[_], Resource, A](ma: M[A]) =
       ReaderT.liftF[M, Resource, A](ma)
 
     def fromQuery[M[_], Resource, A](
-      query: Query[Resource, M[A]]
-    ): QueryT[M, Resource, A] = 
+        query: Query[Resource, M[A]]
+    ): QueryT[M, Resource, A] =
       QueryT[M, Resource, A](query.run)
   }
 
@@ -66,14 +66,14 @@ package object database {
     import cats.instances.either._
 
     def apply[Resource, Err, A](
-      run: Resource => Either[Err, A]
+        run: Resource => Either[Err, A]
     ): QueryE[Resource, Err, A] =
       new QueryE(run)
 
     def pure[Resource, Err, A](a: A) =
       QueryT.pure[({ type F[B] = Either[Err, B] })#F, Resource, A](a)
 
-    def ask[Resource, Err] = 
+    def ask[Resource, Err] =
       QueryT.ask[({ type F[A] = Either[Err, A] })#F, Resource]
 
     def liftF[Resource, Err, A](ma: Either[Err, A]) =

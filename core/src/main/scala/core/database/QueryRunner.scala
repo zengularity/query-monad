@@ -14,9 +14,9 @@ sealed trait QueryRunner[Resource] {
 
 object QueryRunner {
   private class DefaultRunner[Resource](
-    wr: WithResource[Resource]
+      wr: WithResource[Resource]
   )(
-    implicit ec: ExecutionContext
+      implicit ec: ExecutionContext
   ) extends QueryRunner[Resource] {
 
     def apply[M[_], T](query: QueryT[M, Resource, T]): Future[M[T]] =
@@ -26,9 +26,9 @@ object QueryRunner {
 
   // Default factory
   def apply[Resource](
-    wr: WithResource[Resource]
+      wr: WithResource[Resource]
   )(
-    implicit ec: ExecutionContext
+      implicit ec: ExecutionContext
   ): QueryRunner[Resource] =
     new DefaultRunner(wr)
 }

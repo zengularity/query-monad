@@ -2,7 +2,7 @@ package com.zengularity.querymonad.test.core.module.sql.models
 
 import anorm._
 import acolyte.jdbc.Implicits._
-import acolyte.jdbc.{QueryResult  => AcolyteQueryResult}
+import acolyte.jdbc.{QueryResult => AcolyteQueryResult}
 import acolyte.jdbc.RowLists.rowList4
 
 import com.zengularity.querymonad.core.module.sql.SqlQuery
@@ -11,10 +11,10 @@ case class Professor(id: Int, name: String, age: Int, material: Int)
 
 object Professor {
   val schema = rowList4(
-      classOf[Int]    -> "id",
-      classOf[String] -> "name",
-      classOf[Int]    -> "age",
-      classOf[Int]    -> "material"
+    classOf[Int] -> "id",
+    classOf[String] -> "name",
+    classOf[Int] -> "age",
+    classOf[Int] -> "material"
   )
 
   val parser = Macro.namedParser[Professor]

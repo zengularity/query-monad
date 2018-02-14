@@ -35,7 +35,7 @@ package object sql {
   object SqlQueryT {
     def apply[M[_], A](run: Connection => M[A]) =
       QueryT.apply[M, Connection, A](run)
- 
+
     def pure[M[_]: Applicative, A](a: A) =
       QueryT.pure[M, Connection, A](a)
 
