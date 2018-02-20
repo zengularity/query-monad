@@ -19,14 +19,12 @@ object Material {
 
   val parser = Macro.namedParser[Material]
 
-  val resultSet
-    : AcolyteQueryResult = Material.schema :+ (1, "Computer Science", 20, "Beginner")
+  val resultSet: AcolyteQueryResult =
+    Material.schema :+ (1, "Computer Science", 20, "Beginner")
 
-  def fetchMaterial(id: Int): SqlQuery[Option[Material]] = {
+  def fetchMaterial(id: Int): SqlQuery[Option[Material]] =
     SqlQuery { implicit connection =>
-      SQL"SELECT * FROM materials where id = {id}"
-        .on('id -> id)
+      SQL"SELECT * FROM materials where id = $id"
         .as(Material.parser.singleOpt)
     }
-  }
 }

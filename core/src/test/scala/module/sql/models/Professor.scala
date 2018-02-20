@@ -19,13 +19,12 @@ object Professor {
 
   val parser = Macro.namedParser[Professor]
 
-  val resultSet: AcolyteQueryResult = Professor.schema :+ (1, "John Doe", 35, 1)
+  val resultSet: AcolyteQueryResult =
+    Professor.schema :+ (1, "John Doe", 35, 1)
 
-  def fetchProfessor(id: Int): SqlQuery[Option[Professor]] = {
+  def fetchProfessor(id: Int): SqlQuery[Option[Professor]] =
     SqlQuery { implicit connection =>
-      SQL"SELECT * FROM professors where id = {id}"
-        .on('id -> id)
+      SQL"SELECT * FROM professors where id = $id"
         .as(Professor.parser.singleOpt)
     }
-  }
 }
