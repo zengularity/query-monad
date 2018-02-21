@@ -10,6 +10,8 @@ sealed trait QueryRunner[Resource] {
 
   def apply[M[_], T](query: QueryT[M, Resource, T]): Future[M[T]]
 
+  def async[T](query: QueryT[Future, Resource, T]): Future[T]
+
 }
 
 object QueryRunner {
@@ -21,6 +23,9 @@ object QueryRunner {
 
     def apply[M[_], T](query: QueryT[M, Resource, T]): Future[M[T]] =
       Future(wr(query.run))
+
+    def async[T](query: QueryT[Future, Resource, T]): Future[T] =
+      wr(query.run)
 
   }
 
