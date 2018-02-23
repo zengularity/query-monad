@@ -11,7 +11,6 @@ import org.specs2.mutable.Specification
 
 import com.zengularity.querymonad.core.module.sql.{
   SqlQuery,
-  SqlQueryO,
   SqlQueryT,
   SqlQueryRunner,
   WithSqlConnection
@@ -108,8 +107,8 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         SqlConnectionFactory.withSqlConnection(handler)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
-        professor <- SqlQueryO.fromQuery(Professor.fetchProfessor(1))
-        material <- SqlQueryO.fromQuery(
+        professor <- SqlQueryT.fromQuery(Professor.fetchProfessor(1))
+        material <- SqlQueryT.fromQuery(
           Material.fetchMaterial(professor.material))
       } yield (professor, material)
       runner(query) aka "professor and material" must beNone.await
