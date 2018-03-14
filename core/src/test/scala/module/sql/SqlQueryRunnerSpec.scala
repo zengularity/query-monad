@@ -133,7 +133,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
               .as(SqlParser.int("res").single)
           }
         }
-      runner.async(query) aka "result" must beTypedEqualTo(5).await
+      runner(query) aka "result" must beTypedEqualTo(5).await
     }
   }
 
