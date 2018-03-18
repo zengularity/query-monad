@@ -1,0 +1,9 @@
+root = true
+
+# All files
+insert_final_newline = true
+
+# 2 spaces indentation
+[*.scala, *.sbt]
+indent_style = space
+indent_size = 2

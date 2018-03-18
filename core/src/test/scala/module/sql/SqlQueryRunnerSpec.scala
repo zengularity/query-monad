@@ -11,8 +11,8 @@ import org.specs2.mutable.Specification
 
 import com.zengularity.querymonad.core.module.sql.{
   SqlQuery,
-  SqlQueryT,
   SqlQueryRunner,
+  SqlQueryT,
   WithSqlConnection
 }
 import com.zengularity.querymonad.test.core.module.sql.models.{
@@ -29,7 +29,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val withSqlConnection: WithSqlConnection =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
-      val query = SqlQuery.pure(1)
+      val query  = SqlQuery.pure(1)
 
       runner(query) aka "material" must beTypedEqualTo(1).await
     }
@@ -38,7 +38,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val withSqlConnection: WithSqlConnection =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
-      val query = SqlQueryT.liftF(Seq(1))
+      val query  = SqlQueryT.liftF(Seq(1))
 
       runner(query) aka "material" must beTypedEqualTo(Seq(1)).await
     }
@@ -69,7 +69,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
-        _ <- SqlQuery.ask
+        _         <- SqlQuery.ask
         professor <- Professor.fetchProfessor(2)
       } yield professor
 
@@ -93,7 +93,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
         professor <- Professor.fetchProfessor(1).map(_.get)
-        material <- Material.fetchMaterial(professor.material).map(_.get)
+        material  <- Material.fetchMaterial(professor.material).map(_.get)
       } yield (professor, material)
 
       runner(query) aka "professor and material" must beTypedEqualTo(

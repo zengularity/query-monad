@@ -11,9 +11,9 @@ case class Material(id: Int, name: String, numberOfHours: Int, level: String)
 
 object Material {
   val schema = rowList4(
-    classOf[Int] -> "id",
+    classOf[Int]    -> "id",
     classOf[String] -> "name",
-    classOf[Int] -> "numberOfHours",
+    classOf[Int]    -> "numberOfHours",
     classOf[String] -> "level"
   )
 

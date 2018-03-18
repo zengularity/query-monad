@@ -12,8 +12,8 @@ import play.api.routing.sird._
 
 import com.zengularity.querymonad.core.module.sql.{
   SqlQuery,
-  SqlQueryT,
-  SqlQueryRunner
+  SqlQueryRunner,
+  SqlQueryT
 }
 import com.zengularity.querymonad.examples.database.WithPlayTransaction
 

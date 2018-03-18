@@ -65,7 +65,7 @@ lazy val core = (project in file("core"))
     name := "query-core",
     libraryDependencies ++= Seq(
       Dependencies.acolyte % Test,
-      Dependencies.anorm % Test,
+      Dependencies.anorm   % Test,
       Dependencies.cats,
       Dependencies.specs2 % Test
     )

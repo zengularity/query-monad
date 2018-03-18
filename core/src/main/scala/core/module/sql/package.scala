@@ -9,10 +9,10 @@ import cats.Applicative
 
 import com.zengularity.querymonad.core.database.{
   Query,
+  QueryE,
+  QueryO,
   QueryRunner,
   QueryT,
-  QueryO,
-  QueryE,
   WithResource
 }
 
