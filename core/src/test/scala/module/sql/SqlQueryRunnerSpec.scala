@@ -30,6 +30,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = SqlQuery.pure(1)
+
       runner(query) aka "material" must beTypedEqualTo(1).await
     }
 
@@ -38,6 +39,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = SqlQueryT.liftF(Seq(1))
+
       runner(query) aka "material" must beTypedEqualTo(Seq(1)).await
     }
 
@@ -47,6 +49,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         SqlConnectionFactory.withSqlConnection(Professor.resultSet)
       val runner = SqlQueryRunner(withSqlConnection)
       val result = runner(Professor.fetchProfessor(1)).map(_.get)
+
       result aka "professor" must beTypedEqualTo(
         Professor(1, "John Doe", 35, 1)).await
     }
@@ -56,6 +59,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         SqlConnectionFactory.withSqlConnection(Material.resultSet)
       val runner = SqlQueryRunner(withSqlConnection)
       val result = runner(Material.fetchMaterial(1)).map(_.get)
+
       result aka "material" must beTypedEqualTo(
         Material(1, "Computer Science", 20, "Beginner")).await
     }
@@ -68,6 +72,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         _ <- SqlQuery.ask
         professor <- Professor.fetchProfessor(2)
       } yield professor
+
       runner(query) aka "material" must beNone.await
     }
 
@@ -90,6 +95,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         professor <- Professor.fetchProfessor(1).map(_.get)
         material <- Material.fetchMaterial(professor.material).map(_.get)
       } yield (professor, material)
+
       runner(query) aka "professor and material" must beTypedEqualTo(
         Tuple2(Professor(1, "John Doe", 35, 1),
                Material(1, "Computer Science", 20, "Beginner"))).await
@@ -111,6 +117,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         material <- SqlQueryT.fromQuery(
           Material.fetchMaterial(professor.material))
       } yield (professor, material)
+
       runner(query) aka "professor and material" must beNone.await
     }
 
@@ -133,6 +140,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
               .as(SqlParser.int("res").single)
           }
         }
+
       runner(query) aka "result" must beTypedEqualTo(5).await
     }
   }

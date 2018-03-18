@@ -40,8 +40,7 @@ class AppComponents(context: Context)
           SqlQueryT{implicit c =>
             Future {
               Thread.sleep(2000) // Simumlates a a very slow query
-              val r = SQL"select sqrt($num) as result".as(SqlParser.double("result").single)
-              r
+              SQL"select sqrt($num) as result".as(SqlParser.double("result").single)
             }
           }
 

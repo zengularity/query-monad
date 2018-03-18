@@ -2,7 +2,6 @@ package com.zengularity.querymonad.core.database
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
-import scala.util.Try
 
 /**
  * Heavily inspired from work done by @cchantep in Acolyte (see acolyte.reactivemongo.ComposeWithCompletion)
@@ -35,21 +34,8 @@ trait LowPriorityCompose { _: ComposeWithCompletion.type =>
   implicit def pureOut[F[_], A]: Aux[F, A, F[A]] = new ComposeWithCompletion[F, A] {
     type Outer = Future[F[A]]
 
-    def apply[In](resource: In, f: In => F[A])(onComplete: In => Unit)(implicit ec: ExecutionContext): Outer = {
-      Try {
-        val result = f(resource)
-        Future.successful(result)
-      } fold (
-        ex => {
-          onComplete(resource)
-          Future.failed(ex)
-        },
-        result => {
-          onComplete(resource)
-          result
-        }
-      )
-    }
+    def apply[In](resource: In, f: In => F[A])(onComplete: In => Unit)(implicit ec: ExecutionContext): Outer =
+      Future(f(resource)).andThen { case _ => onComplete(resource) }
 
     override val toString = "pureOut"
   }
