@@ -8,9 +8,9 @@ import scala.language.higherKinds
   */
 sealed trait QueryRunner[Resource] {
   def apply[M[_], T](
-    query: QueryT[M, Resource, T]
+      query: QueryT[M, Resource, T]
   )(
-    implicit compose: ComposeWithCompletion[M, T]
+      implicit compose: ComposeWithCompletion[M, T]
   ): compose.Outer
 }
 
@@ -22,9 +22,9 @@ object QueryRunner {
   ) extends QueryRunner[Resource] {
 
     def apply[M[_], T](
-      query: QueryT[M, Resource, T]
+        query: QueryT[M, Resource, T]
     )(
-      implicit compose: ComposeWithCompletion[M, T]
+        implicit compose: ComposeWithCompletion[M, T]
     ): compose.Outer = {
       wr { resource =>
         compose(resource, query.run)(wr.releaseIfNecessary)
