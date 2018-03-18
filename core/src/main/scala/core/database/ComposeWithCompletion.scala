@@ -4,8 +4,8 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 
 /**
-  * Heavily inspired from work done by @cchantep in Acolyte (see acolyte.reactivemongo.ComposeWithCompletion)
-  */
+ * Heavily inspired from work done by @cchantep in Acolyte (see acolyte.reactivemongo.ComposeWithCompletion)
+ */
 trait ComposeWithCompletion[F[_], Out] {
   type Outer <: Future[_]
 

@@ -49,8 +49,11 @@ val commonSettings = Seq(
   )
 )
 
+scalafmtOnCompile in ThisBuild := true
 scalafmtOnCompile := true
-scalafmtConfig := file("project/scalafmt.conf")
+scalafmtTestOnCompile in ThisBuild := true
+scalafmtTestOnCompile := true
+scalafmtConfig in ThisBuild := file("project/scalafmt.conf")
 
 wartremoverErrors ++= Warts.unsafe
 

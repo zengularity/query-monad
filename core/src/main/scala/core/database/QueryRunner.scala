@@ -4,8 +4,8 @@ import scala.concurrent.ExecutionContext
 import scala.language.higherKinds
 
 /**
-  * A class who can run a Query.
-  */
+ * A class who can run a Query.
+ */
 sealed trait QueryRunner[Resource] {
   def apply[M[_], T](
       query: QueryT[M, Resource, T]
