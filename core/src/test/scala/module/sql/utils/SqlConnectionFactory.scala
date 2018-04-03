@@ -13,7 +13,8 @@ import com.zengularity.querymonad.core.module.sql.WithSqlConnection
 object SqlConnectionFactory {
 
   def withSqlConnection[A <: AcolyteQueryResult](
-      resultsSet: A): WithSqlConnection =
+      resultsSet: A
+  ): WithSqlConnection =
     new WithSqlConnection {
       def apply[B](f: Connection => B): B =
         AcolyteDSL.withQueryResult(resultsSet)(f)

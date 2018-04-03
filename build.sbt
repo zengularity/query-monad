@@ -37,13 +37,15 @@ val commonSettings = Seq(
     Set(
       "-Ywarn-unused:imports",
       "-Xfatal-warnings"
-    ))),
+    )
+  )),
   scalacOptions in (Test, compile) ~= (_.filterNot(
     Set(
       "-Ywarn-unused:imports",
       "-Xfatal-warnings",
       "-Yrangepos"
-    ))),
+    )
+  )),
   resolvers ++= Seq[Resolver](
     Resolver.sonatypeRepo("releases")
   )

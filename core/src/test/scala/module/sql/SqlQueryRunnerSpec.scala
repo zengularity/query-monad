@@ -29,7 +29,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val withSqlConnection: WithSqlConnection =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
-      val query  = SqlQuery.pure(1)
+      val query = SqlQuery.pure(1)
 
       runner(query) aka "material" must beTypedEqualTo(1).await
     }
@@ -38,7 +38,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val withSqlConnection: WithSqlConnection =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
-      val query  = SqlQueryT.liftF(Seq(1))
+      val query = SqlQueryT.liftF(Seq(1))
 
       runner(query) aka "material" must beTypedEqualTo(Seq(1)).await
     }
@@ -51,7 +51,8 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val result = runner(Professor.fetchProfessor(1)).map(_.get)
 
       result aka "professor" must beTypedEqualTo(
-        Professor(1, "John Doe", 35, 1)).await
+        Professor(1, "John Doe", 35, 1)
+      ).await
     }
 
     "retrieve material with id 1" in {
@@ -61,7 +62,8 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val result = runner(Material.fetchMaterial(1)).map(_.get)
 
       result aka "material" must beTypedEqualTo(
-        Material(1, "Computer Science", 20, "Beginner")).await
+        Material(1, "Computer Science", 20, "Beginner")
+      ).await
     }
 
     "not retrieve professor with id 2" in {
@@ -98,7 +100,8 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
 
       runner(query) aka "professor and material" must beTypedEqualTo(
         Tuple2(Professor(1, "John Doe", 35, 1),
-               Material(1, "Computer Science", 20, "Beginner"))).await
+               Material(1, "Computer Science", 20, "Beginner"))
+      ).await
     }
 
     "not retrieve professor with id 1 and no material" in {
@@ -115,7 +118,8 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val query = for {
         professor <- SqlQueryT.fromQuery(Professor.fetchProfessor(1))
         material <- SqlQueryT.fromQuery(
-          Material.fetchMaterial(professor.material))
+          Material.fetchMaterial(professor.material)
+        )
       } yield (professor, material)
 
       runner(query) aka "professor and material" must beNone.await

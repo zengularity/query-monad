@@ -45,7 +45,8 @@ class AppComponents(context: Context)
             Future {
               Thread.sleep(2000) // Simumlates a a very slow query
               SQL"select sqrt($num) as result".as(
-                SqlParser.double("result").single)
+                SqlParser.double("result").single
+              )
             }
           }
 
@@ -57,8 +58,10 @@ class AppComponents(context: Context)
         val query =
           for {
             number <- SqlQuery.pure(42)
-            text <- SqlQuery(implicit c =>
-              SQL"select $cmd as result".as(SqlParser.str("result").single))
+            text <- SqlQuery(
+              implicit c =>
+                SQL"select $cmd as result".as(SqlParser.str("result").single)
+            )
           } yield (text + number)
 
         queryRunner(query).map(r => Ok(r.toString))

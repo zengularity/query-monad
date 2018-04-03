@@ -10,7 +10,8 @@ trait ComposeWithCompletion[F[_], Out] {
   type Outer <: Future[_]
 
   def apply[In](resource: In, f: In => F[Out])(onComplete: In => Unit)(
-      implicit ec: ExecutionContext): Outer
+      implicit ec: ExecutionContext
+  ): Outer
 }
 
 object ComposeWithCompletion extends LowPriorityCompose {
@@ -21,8 +22,9 @@ object ComposeWithCompletion extends LowPriorityCompose {
     new ComposeWithCompletion[Future, A] {
       type Outer = Future[A]
 
-      def apply[In](resource: In, f: In => Future[A])(onComplete: In => Unit)(
-          implicit ec: ExecutionContext): Outer =
+      def apply[In](resource: In, f: In => Future[A])(
+          onComplete: In => Unit
+      )(implicit ec: ExecutionContext): Outer =
         f(resource).andThen {
           case _ => onComplete(resource)
         }
@@ -38,8 +40,9 @@ trait LowPriorityCompose { _: ComposeWithCompletion.type =>
     new ComposeWithCompletion[F, A] {
       type Outer = Future[F[A]]
 
-      def apply[In](resource: In, f: In => F[A])(onComplete: In => Unit)(
-          implicit ec: ExecutionContext): Outer =
+      def apply[In](resource: In, f: In => F[A])(
+          onComplete: In => Unit
+      )(implicit ec: ExecutionContext): Outer =
         Future(f(resource)).andThen { case _ => onComplete(resource) }
 
       override val toString = "pureOut"

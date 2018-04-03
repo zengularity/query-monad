@@ -22,7 +22,8 @@ package object database {
 
   object QueryT {
     def apply[M[_], Resource, A](
-        run: Resource => M[A]): QueryT[M, Resource, A] =
+        run: Resource => M[A]
+    ): QueryT[M, Resource, A] =
       new QueryT(run)
 
     def pure[M[_]: Applicative, Resource, A](a: A) =
@@ -35,7 +36,8 @@ package object database {
       ReaderT.liftF[M, Resource, A](ma)
 
     def fromQuery[M[_], Resource, A](
-        query: Query[Resource, M[A]]): QueryT[M, Resource, A] =
+        query: Query[Resource, M[A]]
+    ): QueryT[M, Resource, A] =
       QueryT[M, Resource, A](query.run)
   }
 
