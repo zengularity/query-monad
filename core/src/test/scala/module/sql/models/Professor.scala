@@ -11,10 +11,10 @@ case class Professor(id: Int, name: String, age: Int, material: Int)
 
 object Professor {
   val schema = rowList4(
-    classOf[Int] -> "id",
+    classOf[Int]    -> "id",
     classOf[String] -> "name",
-    classOf[Int] -> "age",
-    classOf[Int] -> "material"
+    classOf[Int]    -> "age",
+    classOf[Int]    -> "material"
   )
 
   val parser = Macro.namedParser[Professor]

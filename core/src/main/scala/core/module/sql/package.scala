@@ -9,10 +9,10 @@ import cats.Applicative
 
 import com.zengularity.querymonad.core.database.{
   Query,
+  QueryE,
+  QueryO,
   QueryRunner,
   QueryT,
-  QueryO,
-  QueryE,
   WithResource
 }
 
@@ -57,8 +57,9 @@ package object sql {
   type SqlQueryRunner = QueryRunner[Connection]
 
   object SqlQueryRunner {
-    def apply(wc: WithSqlConnection)(
-        implicit ec: ExecutionContext): SqlQueryRunner =
+    def apply(
+        wc: WithSqlConnection
+    )(implicit ec: ExecutionContext): SqlQueryRunner =
       QueryRunner[Connection](wc)
   }
 

@@ -37,20 +37,25 @@ val commonSettings = Seq(
     Set(
       "-Ywarn-unused:imports",
       "-Xfatal-warnings"
-    ))),
+    )
+  )),
   scalacOptions in (Test, compile) ~= (_.filterNot(
     Set(
       "-Ywarn-unused:imports",
       "-Xfatal-warnings",
       "-Yrangepos"
-    ))),
+    )
+  )),
   resolvers ++= Seq[Resolver](
     Resolver.sonatypeRepo("releases")
   )
 )
 
+scalafmtOnCompile in ThisBuild := true
 scalafmtOnCompile := true
-scalafmtConfig := file("project/scalafmt.conf")
+scalafmtTestOnCompile in ThisBuild := true
+scalafmtTestOnCompile := true
+scalafmtConfig in ThisBuild := file("project/scalafmt.conf")
 
 wartremoverErrors ++= Warts.unsafe
 
@@ -62,7 +67,7 @@ lazy val core = (project in file("core"))
     name := "query-core",
     libraryDependencies ++= Seq(
       Dependencies.acolyte % Test,
-      Dependencies.anorm % Test,
+      Dependencies.anorm   % Test,
       Dependencies.cats,
       Dependencies.specs2 % Test
     )
