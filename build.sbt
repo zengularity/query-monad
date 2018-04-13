@@ -41,7 +41,8 @@ val commonSettings = Seq(
   scalacOptions in (Test, compile) ~= (_.filterNot(
     Set(
       "-Ywarn-unused:imports",
-      "-Xfatal-warnings"
+      "-Xfatal-warnings",
+      "-Yrangepos"
     ))),
   resolvers ++= Seq[Resolver](
     Resolver.sonatypeRepo("releases")
@@ -60,7 +61,10 @@ lazy val core = (project in file("core"))
   .settings(
     name := "query-core",
     libraryDependencies ++= Seq(
-      Dependencies.cats
+      Dependencies.acolyte % Test,
+      Dependencies.anorm % Test,
+      Dependencies.cats,
+      Dependencies.specs2 % Test
     )
   )
 
@@ -72,8 +76,7 @@ lazy val sampleAppExample = (project in file("examples/sample-app"))
     libraryDependencies ++= Seq(
       jdbc,
       Dependencies.anorm,
-      Dependencies.h2,
-      Dependencies.scalaTestPlusPlay
+      Dependencies.h2
     )
   )
   .dependsOn(core)

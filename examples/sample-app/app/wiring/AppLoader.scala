@@ -1,5 +1,7 @@
 package com.zengularity.querymonad.examples.wiring
 
+import scala.concurrent.Future
+
 import anorm._
 import play.api.ApplicationLoader.Context
 import play.api._
@@ -8,7 +10,11 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import com.zengularity.querymonad.core.module.sql.{SqlQuery, SqlQueryRunner}
+import com.zengularity.querymonad.core.module.sql.{
+  SqlQuery,
+  SqlQueryT,
+  SqlQueryRunner
+}
 import com.zengularity.querymonad.examples.database.WithPlayTransaction
 
 class AppComponents(context: Context)
@@ -34,8 +40,14 @@ class AppComponents(context: Context)
 
     case GET(p"/sqrt/${double(num)}") =>
       Action.async {
-        val query = SqlQuery(implicit c =>
-          SQL"select sqrt($num) as result".as(SqlParser.int("result").single))
+        val query =
+          SqlQueryT { implicit c =>
+            Future {
+              Thread.sleep(2000) // Simumlates a a very slow query
+              SQL"select sqrt($num) as result".as(
+                SqlParser.double("result").single)
+            }
+          }
 
         queryRunner(query).map(r => Ok(r.toString))
       }
