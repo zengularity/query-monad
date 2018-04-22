@@ -10,12 +10,12 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
-import com.zengularity.querymonad.core.module.sql.{
+import com.zengularity.querymonad.module.sql.{
   SqlQuery,
   SqlQueryRunner,
   SqlQueryT
 }
-import com.zengularity.querymonad.examples.database.WithPlayTransaction
+import com.zengularity.querymonad.module.playsql.database.WithPlayTransaction
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)

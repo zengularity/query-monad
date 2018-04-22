@@ -1,4 +1,4 @@
-package com.zengularity.querymonad.test.core.module.sql
+package com.zengularity.querymonad.test.module.sql
 
 import acolyte.jdbc.{
   AcolyteDSL,
@@ -9,17 +9,14 @@ import acolyte.jdbc.{
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 
-import com.zengularity.querymonad.core.module.sql.{
+import com.zengularity.querymonad.module.sql.{
   SqlQuery,
   SqlQueryRunner,
   SqlQueryT,
   WithSqlConnection
 }
-import com.zengularity.querymonad.test.core.module.sql.models.{
-  Material,
-  Professor
-}
-import com.zengularity.querymonad.test.core.module.sql.utils.SqlConnectionFactory
+import com.zengularity.querymonad.test.module.sql.models.{Material, Professor}
+import com.zengularity.querymonad.test.module.sql.utils.SqlConnectionFactory
 
 class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
 

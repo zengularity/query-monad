@@ -1,11 +1,11 @@
-package com.zengularity.querymonad.test.core.module.sql.models
+package com.zengularity.querymonad.test.module.sql.models
 
 import anorm._
 import acolyte.jdbc.Implicits._
 import acolyte.jdbc.{QueryResult => AcolyteQueryResult}
 import acolyte.jdbc.RowLists.rowList4
 
-import com.zengularity.querymonad.core.module.sql.SqlQuery
+import com.zengularity.querymonad.module.sql.SqlQuery
 
 case class Professor(id: Int, name: String, age: Int, material: Int)
 

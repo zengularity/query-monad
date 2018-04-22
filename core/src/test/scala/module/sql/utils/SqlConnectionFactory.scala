@@ -1,4 +1,4 @@
-package com.zengularity.querymonad.test.core.module.sql.utils
+package com.zengularity.querymonad.test.module.sql.utils
 
 import java.sql.Connection
 
@@ -8,7 +8,7 @@ import acolyte.jdbc.{
   ScalaCompositeHandler
 }
 
-import com.zengularity.querymonad.core.module.sql.WithSqlConnection
+import com.zengularity.querymonad.module.sql.WithSqlConnection
 
 object SqlConnectionFactory {
 

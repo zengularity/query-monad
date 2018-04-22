@@ -1,4 +1,4 @@
-package com.zengularity.querymonad.core.module
+package com.zengularity.querymonad.module
 
 import java.sql.Connection
 

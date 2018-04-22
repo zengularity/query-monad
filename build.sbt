@@ -59,7 +59,11 @@ scalafmtConfig in ThisBuild := file("project/scalafmt.conf")
 
 wartremoverErrors ++= Warts.unsafe
 
+//
 // Projects definitions
+//
+
+// Core + Modules
 
 lazy val core = (project in file("core"))
   .settings(
@@ -74,20 +78,33 @@ lazy val core = (project in file("core"))
     )
   )
 
+lazy val playSqlModule = (project in file("modules/play-sql"))
+  .settings(commonSettings)
+  .settings(
+    name := "query-play-sql",
+    libraryDependencies ++= Seq(
+      jdbc
+    )
+  )
+  .dependsOn(core)
+
+// Examples
+
 lazy val sampleAppExample = (project in file("examples/sample-app"))
   .enablePlugins(PlayScala)
   .settings(
     commonSettings ++ Seq(
       name := "sample-app-example",
       libraryDependencies ++= Seq(
-        jdbc,
         Dependencies.anorm,
         Dependencies.h2
       )
     )
   )
-  .dependsOn(core)
+  .dependsOn(core, playSqlModule)
+
+// Aggregate all projects
 
 lazy val root: Project = project
   .in(file("."))
-  .aggregate(core, sampleAppExample)
+  .aggregate(core, sampleAppExample, playSqlModule)

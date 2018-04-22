@@ -1,10 +1,10 @@
-package com.zengularity.querymonad.examples.database
+package com.zengularity.querymonad.module.playsql.database
 
 import java.sql.Connection
 
 import play.api.db.Database
 
-import com.zengularity.querymonad.core.module.sql.WithSqlConnection
+import com.zengularity.querymonad.module.sql.WithSqlConnection
 
 class WithPlayTransaction(db: Database) extends WithSqlConnection {
   def apply[A](f: Connection => A): A = {
