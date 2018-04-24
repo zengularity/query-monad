@@ -1,0 +1,10 @@
+## User API
+POST          /api/user                                        com.zengularity.querymonad.examples.todoapp.controller.UserController.createUser
+GET           /api/user/:userId                                com.zengularity.querymonad.examples.todoapp.controller.UserController.getUser(userId: Int)
+DELETE        /api/user/:userId                                com.zengularity.querymonad.examples.todoapp.controller.UserController.deleteUser(userId: Int)
+
+## Todo API
+POST          /api/todo                                        com.zengularity.querymonad.examples.todoapp.controller.TodoController.addTodo
+GET           /api/todo/:todoId                                com.zengularity.querymonad.examples.todoapp.controller.TodoController.getTodo(todoId: Int)
+PUT           /api/todo/:todoId                                com.zengularity.querymonad.examples.todoapp.controller.TodoController.completeTodo(todoId: Int)
+DELETE        /api/todo/:todoId                                com.zengularity.querymonad.examples.todoapp.controller.TodoController.removeTodo(todoId: Int)

@@ -50,6 +50,9 @@ package object sql {
 
     def fromQuery[M[_], A](query: SqlQuery[M[A]]) =
       QueryT.fromQuery[M, Connection, A](query)
+
+    def liftQuery[M[_]: Applicative, A](query: SqlQuery[A]) =
+      QueryT.liftQuery[M, Connection, A](query)
   }
 
   type SqlQueryO[A] = QueryO[Connection, A]
