@@ -1,19 +1,20 @@
 # --- !Ups
 
-CREATE TABLE user (
-    id NUMBER NOT NULL,
-    full_name varchar(255) NOT NULL,
+CREATE TABLE users (
+    id INT NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE todo (
-    id NUMBER NOT NULL,
-    content varchar(255) NOT NULL,
-    author_id NUMBER NOT NULL,
-    done boolean NOT NULL,
+CREATE TABLE todos (
+    id INT NOT NULL,
+    content VARCHAR(255) NOT NULL,
+    author_id INT NOT NULL,
+    done BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 
 # --- !Downs
 
-DROP TABLE todo;
+DROP TABLE todos;
+DROP TABLE users;

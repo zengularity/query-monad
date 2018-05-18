@@ -2,6 +2,7 @@ package com.zengularity.querymonad.examples.todoapp.wiring
 
 import play.api.ApplicationLoader.Context
 import play.api._
+import play.api.db.evolutions.EvolutionsComponents
 import play.api.db.{DBComponents, HikariCPComponents}
 import play.api.routing.Router
 import router.Routes
@@ -17,6 +18,7 @@ import com.zengularity.querymonad.examples.todoapp.store.{TodoStore, UserStore}
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
     with DBComponents
+    with EvolutionsComponents
     with HikariCPComponents
     with NoHttpFiltersComponents {
 
@@ -33,6 +35,8 @@ class AppComponents(context: Context)
     new UserController(queryRunner, userStore, controllerComponents),
     new TodoController(queryRunner, todoStore, userStore, controllerComponents)
   )
+
+  applicationEvolutions.start()
 }
 
 class AppLoader extends ApplicationLoader {
