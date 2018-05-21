@@ -18,6 +18,11 @@ class TodoStore() {
       SQL"SELECT * FROM todos WHERE id = $todoId".as(Todo.parser.singleOpt)
     }
 
+  def listTodo(userId: Int): SqlQuery[List[Todo]] =
+    SqlQuery { implicit c =>
+      SQL"SELECT * FROM todos WHERE author_id = $userId".as(Todo.parser.*)
+    }
+
   def completeTodo(todoId: Int): SqlQuery[Option[Todo]] =
     SqlQuery { implicit c =>
       SQL"UPDATE todos SET done = ${true} WHERE id = $todoId".executeUpdate()

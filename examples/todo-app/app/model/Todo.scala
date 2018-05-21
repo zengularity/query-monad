@@ -2,6 +2,7 @@ package com.zengularity.querymonad.examples.todoapp.model
 
 import play.api.libs.json.{Json, OFormat}
 import anorm.{Macro, RowParser}
+import anorm.Macro.ColumnNaming.SnakeCase
 
 case class Todo(
     id: Int,
@@ -12,5 +13,5 @@ case class Todo(
 
 object Todo {
   implicit val format: OFormat[Todo] = Json.format
-  implicit val parser: RowParser[Todo] = Macro.namedParser[Todo]
+  implicit val parser: RowParser[Todo] = Macro.namedParser[Todo](SnakeCase)
 }

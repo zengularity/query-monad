@@ -6,5 +6,6 @@ DELETE        /api/user/:userId                                com.zengularity.q
 ## Todo API
 POST          /api/todo                                        com.zengularity.querymonad.examples.todoapp.controller.TodoController.addTodo
 GET           /api/todo/:todoId                                com.zengularity.querymonad.examples.todoapp.controller.TodoController.getTodo(todoId: Int)
+GET           /api/user/:userId/todo                           com.zengularity.querymonad.examples.todoapp.controller.TodoController.listTodo(userId: Int)
 PUT           /api/todo/:todoId                                com.zengularity.querymonad.examples.todoapp.controller.TodoController.completeTodo(todoId: Int)
 DELETE        /api/todo/:todoId                                com.zengularity.querymonad.examples.todoapp.controller.TodoController.removeTodo(todoId: Int)
