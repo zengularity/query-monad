@@ -1,11 +1,14 @@
 package com.zengularity.querymonad.examples.todoapp.model
 
+import java.util.UUID
+
 import play.api.libs.json.{Json, OFormat}
 import anorm.{Macro, RowParser}
 import anorm.Macro.ColumnNaming.SnakeCase
 
 case class User(
-    id: Int,
+    id: UUID,
+    login: String,
     fullName: String
 )
 

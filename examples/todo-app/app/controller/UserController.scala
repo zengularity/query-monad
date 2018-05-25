@@ -1,37 +1,51 @@
 package com.zengularity.querymonad.examples.todoapp.controller
 
-import scala.concurrent.ExecutionContext
+import java.nio.charset.Charset
+import java.util.{Base64, UUID}
+
+import scala.concurrent.{ExecutionContext, Future}
 
 import cats.instances.either._
 import play.api.mvc._
 import play.api.libs.json.Json
 
-import com.zengularity.querymonad.examples.todoapp.store.UserStore
+import com.zengularity.querymonad.examples.todoapp.controller.model.AddUserPayload
+import com.zengularity.querymonad.examples.todoapp.model.{Credential, User}
+import com.zengularity.querymonad.examples.todoapp.store.{
+  CredentialStore,
+  UserStore
+}
 import com.zengularity.querymonad.module.sql.{SqlQueryRunner, SqlQueryT}
-import com.zengularity.querymonad.examples.todoapp.model.User
 
 class UserController(
     runner: SqlQueryRunner,
     store: UserStore,
+    credentialStore: CredentialStore,
     cc: ControllerComponents
-)(implicit ec: ExecutionContext)
-    extends AbstractController(cc) {
+)(implicit val ec: ExecutionContext)
+    extends AbstractController(cc)
+    with Authentication {
 
   type ErrorOrResult[A] = Either[String, A]
 
-  def createUser: Action[User] =
-    Action(parse.json[User]).async { implicit request =>
+  def createUser: Action[AddUserPayload] =
+    Action(parse.json[AddUserPayload]).async { implicit request =>
       val payload = request.body
       val query = for {
         _ <- SqlQueryT.fromQuery[ErrorOrResult, Unit](
-          store.getUser(payload.id).map {
+          store.getByLogin(payload.login).map {
             case Some(_) => Left("User already exists")
             case None    => Right(())
           }
         )
+
+        user = AddUserPayload.toModel(payload)(UUID.randomUUID())
+        credential = AddUserPayload.toCredential(payload)
+
         _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](
-          store.createUser(request.body)
+          credentialStore.saveCredential(credential)
         )
+        _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](store.createUser(user))
       } yield ()
 
       runner(query).map {
@@ -40,25 +54,66 @@ class UserController(
       }
     }
 
-  def getUser(userId: Int): Action[AnyContent] = Action.async {
+  def getUser(userId: UUID): Action[AnyContent] = ConnectedAction.async {
     runner(store.getUser(userId)).map {
       case Some(user) => Ok(Json.toJson(user))
       case None       => NotFound("The user doesn't exist")
     }
   }
 
-  def deleteUser(userId: Int): Action[AnyContent] = Action.async {
+  def deleteUser(userId: UUID): Action[AnyContent] = ConnectedAction.async {
+    request =>
+      if (request.userInfo.id == userId)
+        runner(store.deleteUser(userId)).map(_ => NoContent.withNewSession)
+      else
+        Future.successful(BadRequest("Cannot operate this action"))
+  }
+
+  def login: Action[AnyContent] = Action.async { implicit request =>
+    // println(request.headers)
+    val authHeaderOpt = request.headers
+      .get("Authorization")
+      .map(_.substring("Basic".length()).trim())
+
     val query = for {
-      _ <- SqlQueryT.fromQuery[ErrorOrResult, User](
-        store.getUser(userId).map(_.toRight("User doesn't exist"))
+      credential <- SqlQueryT.liftF[ErrorOrResult, Credential](
+        authHeaderOpt
+          .map { encoded =>
+            val decoded = Base64.getDecoder().decode(encoded)
+            val authStr = new String(decoded, Charset.forName("UTF-8"))
+            authStr.split(':').toList
+          }
+          .collect {
+            case login :: password :: _ => Credential.build(login, password)
+          }
+          .toRight("Missing credentials")
       )
-      _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](store.deleteUser(userId))
-    } yield ()
+
+      exists <- SqlQueryT.liftQuery[ErrorOrResult, Boolean](
+        credentialStore.check(credential)
+      )
+
+      user <- {
+        if (exists)
+          SqlQueryT.fromQuery[ErrorOrResult, User](
+            store
+              .getByLogin(credential.login)
+              .map(_.toRight("The user doesn't exist"))
+          )
+        else
+          SqlQueryT.liftF[ErrorOrResult, User](Left("Wrong credentials"))
+      }
+    } yield user
 
     runner(query).map {
-      case Right(_)          => NoContent
-      case Left(description) => BadRequest(description)
+      case Right(user) =>
+        NoContent.withSession("id" -> user.id.toString, "login" -> user.login)
+      case Left(description) => BadRequest(description).withNewSession
     }
+  }
+
+  def logout: Action[AnyContent] = ConnectedAction {
+    NoContent.withNewSession
   }
 
 }

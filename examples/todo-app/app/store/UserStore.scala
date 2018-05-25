@@ -1,5 +1,7 @@
 package com.zengularity.querymonad.examples.todoapp.store
 
+import java.util.UUID
+
 import anorm._
 
 import com.zengularity.querymonad.examples.todoapp.model.User
@@ -13,12 +15,19 @@ class UserStore() {
         .executeInsert()
     }.map(_ => ())
 
-  def getUser(userId: Int): SqlQuery[Option[User]] =
+  def getUser(userId: UUID): SqlQuery[Option[User]] =
     SqlQuery { implicit c =>
       SQL"SELECT * FROM users WHERE id = $userId".as(User.parser.singleOpt)
     }
 
-  def deleteUser(userId: Int): SqlQuery[Unit] =
+  def getByLogin(login: String): SqlQuery[Option[User]] =
+    SqlQuery { implicit c =>
+      SQL"SELECT * FROM users WHERE login = $login".as(
+        User.parser.singleOpt
+      )
+    }
+
+  def deleteUser(userId: UUID): SqlQuery[Unit] =
     SqlQuery { implicit c =>
       SQL"DELETE FROM users WHERE id = $userId".execute()
     }.map(_ => ())

@@ -13,7 +13,11 @@ import com.zengularity.querymonad.examples.todoapp.controller.{
   TodoController,
   UserController
 }
-import com.zengularity.querymonad.examples.todoapp.store.{TodoStore, UserStore}
+import com.zengularity.querymonad.examples.todoapp.store.{
+  CredentialStore,
+  TodoStore,
+  UserStore
+}
 
 class AppComponents(context: Context)
     extends BuiltInComponentsFromContext(context)
@@ -29,10 +33,14 @@ class AppComponents(context: Context)
   // Stores
   val userStore: UserStore = new UserStore()
   val todoStore: TodoStore = new TodoStore()
+  val credentialStore: CredentialStore = new CredentialStore()
 
   val router: Router = new Routes(
     httpErrorHandler,
-    new UserController(queryRunner, userStore, controllerComponents),
+    new UserController(queryRunner,
+                       userStore,
+                       credentialStore,
+                       controllerComponents),
     new TodoController(queryRunner, todoStore, userStore, controllerComponents)
   )
 

@@ -121,7 +121,9 @@ lazy val todoAppExample = (project in file("examples/todo-app"))
       Dependencies.anorm,
       Dependencies.postgres
     ),
-    play.sbt.routes.RoutesKeys.routesImport := Seq.empty
+    play.sbt.routes.RoutesKeys.routesImport := Seq(
+      "java.util.UUID"
+    )
   )
   .dependsOn(core, playSqlModule)
 
