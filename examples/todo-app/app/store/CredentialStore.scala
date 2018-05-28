@@ -4,20 +4,24 @@ import anorm._
 
 import com.zengularity.querymonad.examples.todoapp.model.Credential
 import com.zengularity.querymonad.module.sql.SqlQuery
+import com.zengularity.querymonad.examples.todoapp.util.Crypt
 
 class CredentialStore() {
 
   def saveCredential(credential: Credential): SqlQuery[Unit] =
     SqlQuery { implicit c =>
       SQL"INSERT INTO credentials values (${credential.login}, ${credential.password})"
-        .executeInsert()
+        .executeInsert(SqlParser.scalar[String].singleOpt)
     }.map(_ => ())
 
   def check(credential: Credential): SqlQuery[Boolean] =
     SqlQuery { implicit c =>
-      SQL"SELECT count(*) as res FROM credentials WHERE login = ${credential.login} AND password = ${credential.password}"
-        .as(SqlParser.int("res").single)
-    }.map(x => if (x > 0) true else false)
+      SQL"SELECT * FROM credentials WHERE login = ${credential.login}"
+        .as(Credential.parser.singleOpt)
+        .map(_.password)
+        .map(Crypt.checkPassword(credential.password))
+        .getOrElse(false)
+    }
 
   def deleteCredentials(login: String): SqlQuery[Unit] =
     SqlQuery { implicit c =>

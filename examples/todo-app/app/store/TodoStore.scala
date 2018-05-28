@@ -11,8 +11,8 @@ class TodoStore() {
 
   def addTodo(todo: Todo): SqlQuery[Unit] =
     SqlQuery { implicit c =>
-      SQL"INSERT INTO todos values (${todo.id}, ${todo.content}, ${todo.authorId}, ${false})"
-        .executeInsert()
+      SQL"INSERT INTO todos values (${todo.id}, ${todo.todoNumber}, ${todo.content}, ${todo.authorId}, ${false})"
+        .executeInsert(SqlParser.scalar[String].singleOpt)
     }.map(_ => ())
 
   def getTodo(todoId: UUID): SqlQuery[Option[Todo]] =

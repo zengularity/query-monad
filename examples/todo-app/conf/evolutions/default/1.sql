@@ -11,14 +11,14 @@ CREATE TABLE todos (
     id VARCHAR(50) NOT NULL,
     todo_number INT NOT NULL,
     content VARCHAR(255) NOT NULL,
-    author_id INT NOT NULL,
+    author_id VARCHAR(50) NOT NULL,
     done BOOLEAN NOT NULL,
     PRIMARY KEY (id)
 );
 
 CREATE TABLE credentials (
     login VARCHAR(50) NOT NULL,
-    password INT NOT NULL,
+    password VARCHAR(100) NOT NULL,
     PRIMARY KEY (login)
 );
 

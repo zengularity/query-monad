@@ -119,7 +119,8 @@ lazy val todoAppExample = (project in file("examples/todo-app"))
     libraryDependencies ++= Seq(
       evolutions,
       Dependencies.anorm,
-      Dependencies.postgres
+      Dependencies.postgres,
+      Dependencies.jbcrypt
     ),
     play.sbt.routes.RoutesKeys.routesImport := Seq(
       "java.util.UUID"

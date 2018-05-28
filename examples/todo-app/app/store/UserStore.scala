@@ -11,8 +11,8 @@ class UserStore() {
 
   def createUser(user: User): SqlQuery[Unit] =
     SqlQuery { implicit c =>
-      SQL"INSERT INTO users values (${user.id}, ${user.fullName})"
-        .executeInsert()
+      SQL"INSERT INTO users values (${user.id}, ${user.login}, ${user.fullName})"
+        .executeInsert(SqlParser.scalar[String].singleOpt)
     }.map(_ => ())
 
   def getUser(userId: UUID): SqlQuery[Option[User]] =
@@ -22,9 +22,7 @@ class UserStore() {
 
   def getByLogin(login: String): SqlQuery[Option[User]] =
     SqlQuery { implicit c =>
-      SQL"SELECT * FROM users WHERE login = $login".as(
-        User.parser.singleOpt
-      )
+      SQL"SELECT * FROM users WHERE login = $login".as(User.parser.singleOpt)
     }
 
   def deleteUser(userId: UUID): SqlQuery[Unit] =

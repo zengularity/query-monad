@@ -11,13 +11,18 @@
 			"description": "",
 			"item": [
 				{
-					"name": "http://localhost:9000/api/user/1",
+					"name": "Get user",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PLAY_SESSION=eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImlkIjoiNWE3MDIxZDItMTAxOS00MmU5LThiOWUtYmI3MDFhN2VkZjc0IiwibG9naW4iOiJqZG9lIn0sIm5iZiI6MTUyNzQ1NjQ5OSwiaWF0IjoxNTI3NDU2NDk5fQ.spRYSlkAfuAlvGRX5oGJAz5XDsvPBKGRTJ9kTK2FHcA; SameSite=Lax; Path=/; HTTPOnly"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:9000/api/user/1",
+							"raw": "http://localhost:9000/api/user/5a7021d2-1019-42e9-8b9e-bb701a7edf74",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -26,7 +31,7 @@
 							"path": [
 								"api",
 								"user",
-								"1"
+								"5a7021d2-1019-42e9-8b9e-bb701a7edf74"
 							]
 						},
 						"description": ""
@@ -34,7 +39,7 @@
 					"response": []
 				},
 				{
-					"name": "http://localhost:9000/api/user",
+					"name": "Create user",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -49,7 +54,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\": 1,\n\t\"fullName\": \"John Doe\"\n}"
+							"raw": "{\n\t\"login\": \"jdoe\",\n\t\"fullName\": \"John Doe\",\n\t\"password\": \"my-password\"\n}"
 						},
 						"url": {
 							"raw": "http://localhost:9000/api/user",
@@ -68,13 +73,62 @@
 					"response": []
 				},
 				{
-					"name": "http://localhost:9000/api/user/1",
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "my-password",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "jdoe",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 1,\n\t\"fullName\": \"John Doe\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:9000/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9000",
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:9000/api/user/1",
+							"raw": "http://localhost:9000/api/user/b21db918-9e0d-4b36-a13e-3097978d3bb5",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -83,7 +137,7 @@
 							"path": [
 								"api",
 								"user",
-								"1"
+								"b21db918-9e0d-4b36-a13e-3097978d3bb5"
 							]
 						},
 						"description": ""
@@ -97,13 +151,18 @@
 			"description": "",
 			"item": [
 				{
-					"name": "http://localhost:9000/api/todo/1",
+					"name": "Get todo",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PLAY_SESSION=eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImlkIjoiNWE3MDIxZDItMTAxOS00MmU5LThiOWUtYmI3MDFhN2VkZjc0IiwibG9naW4iOiJqZG9lIn0sIm5iZiI6MTUyNzQ1NjQ5OSwiaWF0IjoxNTI3NDU2NDk5fQ.spRYSlkAfuAlvGRX5oGJAz5XDsvPBKGRTJ9kTK2FHcA; SameSite=Lax; Path=/; HTTPOnly"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:9000/api/todo/1",
+							"raw": "http://localhost:9000/api/user/jdoe/todo/8bcc993c-38be-4b32-be4c-11c54cf0090e",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -111,8 +170,10 @@
 							"port": "9000",
 							"path": [
 								"api",
+								"user",
+								"jdoe",
 								"todo",
-								"1"
+								"8bcc993c-38be-4b32-be4c-11c54cf0090e"
 							]
 						},
 						"description": ""
@@ -120,7 +181,7 @@
 					"response": []
 				},
 				{
-					"name": "http://localhost:9000/api/todo",
+					"name": "Create todo",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -131,14 +192,18 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
+							},
+							{
+								"key": "Cookie",
+								"value": "PLAY_SESSION=eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImlkIjoiNWE3MDIxZDItMTAxOS00MmU5LThiOWUtYmI3MDFhN2VkZjc0IiwibG9naW4iOiJqZG9lIn0sIm5iZiI6MTUyNzQ1NjQ5OSwiaWF0IjoxNTI3NDU2NDk5fQ.spRYSlkAfuAlvGRX5oGJAz5XDsvPBKGRTJ9kTK2FHcA; SameSite=Lax; Path=/; HTTPOnly"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"id\": 1,\n    \"content\": \"Prepare dinner\",\n    \"authorId\": 1,\n    \"done\": false\n}"
+							"raw": "{\n\t\"todoNumber\": 1,\n    \"content\": \"Prepare dinner\",\n    \"done\": false\n}"
 						},
 						"url": {
-							"raw": "http://localhost:9000/api/todo",
+							"raw": "http://localhost:9000/api/user/jdoe/todo",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -146,6 +211,8 @@
 							"port": "9000",
 							"path": [
 								"api",
+								"user",
+								"jdoe",
 								"todo"
 							]
 						},
@@ -154,7 +221,7 @@
 					"response": []
 				},
 				{
-					"name": "http://localhost:9000/api/todo/1",
+					"name": "Delete todo",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -177,13 +244,18 @@
 					"response": []
 				},
 				{
-					"name": "http://localhost:9000/api/user/1/todo",
+					"name": "Complete todo",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PLAY_SESSION=eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImlkIjoiNWE3MDIxZDItMTAxOS00MmU5LThiOWUtYmI3MDFhN2VkZjc0IiwibG9naW4iOiJqZG9lIn0sIm5iZiI6MTUyNzQ1NjQ5OSwiaWF0IjoxNTI3NDU2NDk5fQ.spRYSlkAfuAlvGRX5oGJAz5XDsvPBKGRTJ9kTK2FHcA; SameSite=Lax; Path=/; HTTPOnly"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:9000/api/user/1/todo",
+							"raw": "http://localhost:9000/api/user/jdoe/todo/8bcc993c-38be-4b32-be4c-11c54cf0090e",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -192,8 +264,9 @@
 							"path": [
 								"api",
 								"user",
-								"1",
-								"todo"
+								"jdoe",
+								"todo",
+								"8bcc993c-38be-4b32-be4c-11c54cf0090e"
 							]
 						},
 						"description": ""

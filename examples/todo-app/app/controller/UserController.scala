@@ -55,22 +55,29 @@ class UserController(
     }
 
   def getUser(userId: UUID): Action[AnyContent] = ConnectedAction.async {
-    runner(store.getUser(userId)).map {
-      case Some(user) => Ok(Json.toJson(user))
-      case None       => NotFound("The user doesn't exist")
-    }
+    request =>
+      if (request.userInfo.id == userId)
+        runner(store.getUser(userId)).map {
+          case Some(user) => Ok(Json.toJson(user))
+          case None       => NotFound("The user doesn't exist")
+        } else
+        Future.successful(NotFound("Cannot operate this action"))
   }
 
   def deleteUser(userId: UUID): Action[AnyContent] = ConnectedAction.async {
     request =>
-      if (request.userInfo.id == userId)
-        runner(store.deleteUser(userId)).map(_ => NoContent.withNewSession)
-      else
+      val userInfo = request.userInfo
+      if (userInfo.id == userId) {
+        val query = for {
+          _ <- credentialStore.deleteCredentials(userInfo.login)
+          _ <- store.deleteUser(userId)
+        } yield ()
+        runner(query).map(_ => NoContent.withNewSession)
+      } else
         Future.successful(BadRequest("Cannot operate this action"))
   }
 
   def login: Action[AnyContent] = Action.async { implicit request =>
-    // println(request.headers)
     val authHeaderOpt = request.headers
       .get("Authorization")
       .map(_.substring("Basic".length()).trim())
@@ -84,7 +91,7 @@ class UserController(
             authStr.split(':').toList
           }
           .collect {
-            case login :: password :: _ => Credential.build(login, password)
+            case login :: password :: _ => Credential(login, password)
           }
           .toRight("Missing credentials")
       )
