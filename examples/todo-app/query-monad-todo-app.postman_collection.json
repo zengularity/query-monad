@@ -224,10 +224,15 @@
 					"name": "Delete todo",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Cookie",
+								"value": "PLAY_SESSION=eyJhbGciOiJIUzI1NiJ9.eyJkYXRhIjp7ImlkIjoiNWE3MDIxZDItMTAxOS00MmU5LThiOWUtYmI3MDFhN2VkZjc0IiwibG9naW4iOiJqZG9lIn0sIm5iZiI6MTUyNzQ1NjQ5OSwiaWF0IjoxNTI3NDU2NDk5fQ.spRYSlkAfuAlvGRX5oGJAz5XDsvPBKGRTJ9kTK2FHcA; SameSite=Lax; Path=/; HTTPOnly"
+							}
+						],
 						"body": {},
 						"url": {
-							"raw": "http://localhost:9000/api/todo/1",
+							"raw": "http://localhost:9000/api/user/jdoe/todo/8bcc993c-38be-4b32-be4c-11c54cf0090e",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -235,8 +240,10 @@
 							"port": "9000",
 							"path": [
 								"api",
+								"user",
+								"jdoe",
 								"todo",
-								"1"
+								"8bcc993c-38be-4b32-be4c-11c54cf0090e"
 							]
 						},
 						"description": ""
