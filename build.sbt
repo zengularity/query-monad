@@ -1,15 +1,14 @@
 import Dependencies._
 
-name := """query-monad-code"""
+name := "query-monad-code"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.12.4"
+scalaVersion in ThisBuild := "2.12.6"
 
 // Common values
 val commonSettings = Seq(
   organization := "com.zengularity",
-  scalaVersion := "2.12.4",
   crossPaths := false,
   scalacOptions ++= Seq(
     "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -51,6 +50,7 @@ val commonSettings = Seq(
   )
 )
 
+// Scalafmt
 scalafmtOnCompile in ThisBuild := true
 scalafmtOnCompile := true
 scalafmtTestOnCompile in ThisBuild := true
@@ -62,26 +62,28 @@ wartremoverErrors ++= Warts.unsafe
 // Projects definitions
 
 lazy val core = (project in file("core"))
-  .settings(commonSettings)
   .settings(
-    name := "query-core",
-    libraryDependencies ++= Seq(
-      Dependencies.acolyte % Test,
-      Dependencies.anorm   % Test,
-      Dependencies.cats,
-      Dependencies.specs2 % Test
+    commonSettings ++ Seq(
+      name := "query-core",
+      libraryDependencies ++= Seq(
+        Dependencies.acolyte % Test,
+        Dependencies.anorm   % Test,
+        Dependencies.cats,
+        Dependencies.specs2 % Test
+      )
     )
   )
 
 lazy val sampleAppExample = (project in file("examples/sample-app"))
   .enablePlugins(PlayScala)
-  .settings(commonSettings)
   .settings(
-    name := "sample-app-example",
-    libraryDependencies ++= Seq(
-      jdbc,
-      Dependencies.anorm,
-      Dependencies.h2
+    commonSettings ++ Seq(
+      name := "sample-app-example",
+      libraryDependencies ++= Seq(
+        jdbc,
+        Dependencies.anorm,
+        Dependencies.h2
+      )
     )
   )
   .dependsOn(core)
