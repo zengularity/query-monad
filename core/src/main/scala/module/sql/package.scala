@@ -43,6 +43,11 @@ package object sql {
 
     def liftF[M[_], A](ma: M[A]) = QueryT.liftF[M, Connection, A](ma)
 
+    def lift[M[_], A](
+        query: SqlQuery[A]
+    )(implicit F: Applicative[M]) =
+      SqlQueryT[M, A](query.map(F.pure).run)
+
     def fromQuery[M[_], A](query: SqlQuery[M[A]]) =
       QueryT.fromQuery[M, Connection, A](query)
   }

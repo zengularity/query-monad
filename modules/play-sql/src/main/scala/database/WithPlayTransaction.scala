@@ -1,7 +1,6 @@
 package com.zengularity.querymonad.module.playsql.database
 
 import java.sql.Connection
-
 import play.api.db.Database
 
 import com.zengularity.querymonad.module.sql.WithSqlConnection

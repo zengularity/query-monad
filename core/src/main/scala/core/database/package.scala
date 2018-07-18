@@ -35,6 +35,11 @@ package object database {
     def liftF[M[_], Resource, A](ma: M[A]) =
       ReaderT.liftF[M, Resource, A](ma)
 
+    def lift[M[_], Resource, A](
+        query: Query[Resource, A]
+    )(implicit F: Applicative[M]) =
+      QueryT[M, Resource, A](query.map(F.pure).run)
+
     def fromQuery[M[_], Resource, A](
         query: Query[Resource, M[A]]
     ): QueryT[M, Resource, A] =

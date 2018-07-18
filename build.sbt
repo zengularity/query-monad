@@ -84,6 +84,9 @@ lazy val playSqlModule = (project in file("modules/play-sql"))
     name := "query-play-sql",
     libraryDependencies ++= Seq(
       jdbc,
+      evolutions          % Test,
+      Dependencies.anorm  % Test,
+      Dependencies.h2     % Test,
       Dependencies.specs2 % Test
     )
   )
