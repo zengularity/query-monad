@@ -22,19 +22,21 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
   lazy val database = Databases.inMemory()
 
   def beforeAll = {
+    // db initialization
     database
+    // applying evolutions
     Evolutions.cleanupEvolutions(database)
     Evolutions.applyEvolutions(
       database,
       SimpleEvolutionsReader.forDefault(
         Evolution(
           1,
-          "create table user (id number primary key, name varchar(255));",
+          "create table user (id int primary key, name varchar(255));",
           "drop table user;"
         ),
         Evolution(
           2,
-          "create table user_account (id number primary key, balance number, owner_id number);",
+          "create table user_account (id int primary key, balance number, owner_id int);",
           "drop table user_account;"
         ),
         Evolution(
@@ -45,14 +47,13 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
         Evolution(
           4,
           "insert into user_account values (1, 10000000, 1);",
-          "delete from table user_account where id = 1 and code = 'FR';"
+          "delete from table user_account where id = 1;"
         )
       )
     )
   }
 
   def afterAll = {
-    // Evolutions.cleanupEvolutions(database)
     database.shutdown()
   }
 
@@ -64,6 +65,11 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
     val runner = SqlQueryRunner(withSqlConnection)
     AsResult(test(runner))
   }
+
+  val parser =
+    (SqlParser.str("name") ~ SqlParser.int("balance")).map {
+      case name ~ balance => (name, balance)
+    }
 
   "WithPlayTransaction" should {
 
@@ -77,10 +83,6 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
     }
 
     "execute a query with a joint" in { runner: SqlQueryRunner =>
-      val parser =
-        (SqlParser.str("name") ~ SqlParser.int("balance")).map {
-          case name ~ balance => (name, balance)
-        }
       val query = SqlQuery(
         implicit c =>
           SQL"select name, balance from user u join user_account c on u.id = c.owner_id where u.id = 1"
@@ -90,7 +92,30 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
       result must beTypedEqualTo(("picsou", 10000000)).await
     }
 
-    "should fail into when inserting into a non existent table" in {
+    "execute a query which insert into 2 tables" in { runner: SqlQueryRunner =>
+      val insertQuery = for {
+        _ <- SqlQuery(
+          implicit c =>
+            SQL"insert into user values (2, 'donald')".executeInsert()
+        )
+        _ <- SqlQuery(
+          implicit c =>
+            SQL"insert into user_account values (2, 100, 2)".executeInsert()
+        )
+      } yield ()
+
+      runner(insertQuery) must beTypedEqualTo(()).await
+
+      val getQuery = SqlQuery(
+        implicit c =>
+          SQL"select name, balance from user u join user_account c on u.id = c.owner_id where u.id = 2"
+            .as(parser.single)
+      )
+
+      runner(getQuery) must beTypedEqualTo(("donald", 100)).await
+    }
+
+    "fail when inserting into a non existent table" in {
       runner: SqlQueryRunner =>
         val query = SqlQuery(
           implicit c =>
@@ -101,16 +126,16 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
         ).await
     }
 
-    "should not insert data when a failure happen" in {
+    "not insert data when the table doesn't exist" in {
       runner: SqlQueryRunner =>
         val query = for {
           _ <- SqlQuery(
             implicit c =>
-              SQL"insert into user values (2, 'donald')".executeInsert()
+              SQL"insert into user values (3, 'daisy')".executeInsert()
           )
           _ <- SqlQuery(
             implicit c =>
-              SQL"insert into fake_table values (2, 100, 2)".executeInsert()
+              SQL"insert into fake_table values (3, 100, 3)".executeInsert()
           )
         } yield ()
         val queryResult = Future(runner(query))
@@ -123,7 +148,7 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
               runner(
                 SqlQuery(
                   implicit c =>
-                    SQL"select id from user where id = 2"
+                    SQL"select id from user where id = 3"
                       .as(SqlParser.int(1).singleOpt)
                 )
               )
