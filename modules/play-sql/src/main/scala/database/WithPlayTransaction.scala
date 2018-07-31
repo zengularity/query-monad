@@ -7,7 +7,7 @@ import com.zengularity.querymonad.module.sql.WithSqlConnection
 
 class WithPlayTransaction(db: Database) extends WithSqlConnection {
   def apply[A](f: Connection => A): A = {
-    val connection = db.getConnection(false)
+    lazy val connection = db.getConnection(false)
     val result = try {
       f(connection)
     } catch {
