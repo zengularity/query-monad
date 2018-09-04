@@ -26,35 +26,38 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
     database
     // applying evolutions
     Evolutions.cleanupEvolutions(database)
+  }
+
+  def afterAll = {
+    database.shutdown()
+  }
+
+  private def applyEvolutions(): Unit = {
     Evolutions.applyEvolutions(
       database,
       SimpleEvolutionsReader.forDefault(
         Evolution(
           1,
-          "create table user (id int primary key, name varchar(255));",
-          "drop table user;"
+          "create table author (id int primary key, author_name varchar(255));",
+          "drop table author;"
         ),
         Evolution(
           2,
-          "create table user_account (id int primary key, balance number, owner_id int);",
-          "drop table user_account;"
+          "create table book (id int primary key, book_name varchar(255), year int, publisher varchar(255), author_id int);",
+          "drop table book;"
         ),
         Evolution(
           3,
-          "insert into user values (1, 'picsou');",
-          "delete from table user where id = 1;"
+          "insert into author values (1, 'Martin Odersky');",
+          "delete from table author where id = 1;"
         ),
         Evolution(
           4,
-          "insert into user_account values (1, 10000000, 1);",
-          "delete from table user_account where id = 1;"
+          "insert into book values (1, 'Programming in Scala', 2010, 'O''Reilly', 1);",
+          "delete from table book where id = 1;"
         )
       )
     )
-  }
-
-  def afterAll = {
-    database.shutdown()
   }
 
   /**
@@ -63,56 +66,70 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
   def foreach[R: AsResult](test: SqlQueryRunner => R): Result = {
     val withSqlConnection = new WithPlayTransaction(database)
     val runner = SqlQueryRunner(withSqlConnection)
-    AsResult(test(runner))
+    Evolutions.cleanupEvolutions(database)
+    val result = AsResult(test(runner))
+    applyEvolutions()
+    result
   }
 
   val parser =
-    (SqlParser.str("name") ~ SqlParser.int("balance")).map {
-      case name ~ balance => (name, balance)
+    (SqlParser.str("author_name") ~ SqlParser.str("book_name")).map {
+      case authorName ~ bookName => (authorName, bookName)
     }
 
   "WithPlayTransaction" should {
 
-    "execute a query fetching on a single table" in { runner: SqlQueryRunner =>
-      val query = SqlQuery(
-        implicit c =>
-          SQL"select name from user where id = 1".as(SqlParser.str(1).single)
-      )
-      val result = runner(query)
-      result must beTypedEqualTo("picsou").await
+    "test 1=1" in { runner: SqlQueryRunner =>
+      1 must beTypedEqualTo(1)
     }
 
-    "execute a query with a joint" in { runner: SqlQueryRunner =>
+    "execute a query fetching an author" in { runner: SqlQueryRunner =>
       val query = SqlQuery(
         implicit c =>
-          SQL"select name, balance from user u join user_account c on u.id = c.owner_id where u.id = 1"
-            .as(parser.single)
+          SQL"select author_name from author where id = 1".as(
+            SqlParser.str("author_name").single
+        )
       )
       val result = runner(query)
-      result must beTypedEqualTo(("picsou", 10000000)).await
+      result must beTypedEqualTo("Martin Odersky").await
     }
 
-    "execute a query which insert into 2 tables" in { runner: SqlQueryRunner =>
-      val insertQuery = for {
-        _ <- SqlQuery(
+    "execute a query fetching an author and his book (with a join)" in {
+      runner: SqlQueryRunner =>
+        val query = SqlQuery(
           implicit c =>
-            SQL"insert into user values (2, 'donald')".executeInsert()
+            SQL"select author_name, book_name from author a join book b on a.id = b.author_id where a.id = 1"
+              .as(parser.single)
         )
-        _ <- SqlQuery(
+        val result = runner(query)
+        result must beTypedEqualTo(("Martin Odersky", "Programming in Scala")).await
+    }
+
+    "execute a query which insert an author and his book" in {
+      runner: SqlQueryRunner =>
+        val insertQuery = for {
+          _ <- SqlQuery(
+            implicit c =>
+              SQL"insert into author values (2, 'Sam Haliday')".executeInsert()
+          )
+          _ <- SqlQuery(
+            implicit c =>
+              SQL"insert into book values (2, 'Functional programming in Scala for mortals', 2018, 'Packt', 2)"
+                .executeInsert()
+          )
+        } yield ()
+
+        runner(insertQuery) must beTypedEqualTo(()).await
+
+        val getQuery = SqlQuery(
           implicit c =>
-            SQL"insert into user_account values (2, 100, 2)".executeInsert()
+            SQL"select author_name, book_name from author a join book b on a.id = b.author_id where a.id = 2"
+              .as(parser.single)
         )
-      } yield ()
 
-      runner(insertQuery) must beTypedEqualTo(()).await
-
-      val getQuery = SqlQuery(
-        implicit c =>
-          SQL"select name, balance from user u join user_account c on u.id = c.owner_id where u.id = 2"
-            .as(parser.single)
-      )
-
-      runner(getQuery) must beTypedEqualTo(("donald", 100)).await
+        runner(getQuery) must beTypedEqualTo(
+          ("Sam Haliday", "Functional programming in Scala for mortals")
+        ).await
     }
 
     "fail when inserting into a non existent table" in {
@@ -126,16 +143,17 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
         ).await
     }
 
-    "not insert data when the table doesn't exist" in {
+    "not insert an author or the book when the book table is written with a typo" in {
       runner: SqlQueryRunner =>
         val query = for {
           _ <- SqlQuery(
             implicit c =>
-              SQL"insert into user values (3, 'daisy')".executeInsert()
+              SQL"insert into author values (3, 'Sam Haliday')".executeInsert()
           )
           _ <- SqlQuery(
             implicit c =>
-              SQL"insert into fake_table values (3, 100, 3)".executeInsert()
+              SQL"insert into boookk values (2, 'Functional programming in Scala for mortals', 2018, 'Packt', 3)"
+                .executeInsert()
           )
         } yield ()
         val queryResult = Future(runner(query))
@@ -148,15 +166,15 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
               runner(
                 SqlQuery(
                   implicit c =>
-                    SQL"select id from user where id = 3"
+                    SQL"select id from author where id = 3"
                       .as(SqlParser.int(1).singleOpt)
                 )
               )
           }
         queryResult.flatten must throwA[org.h2.jdbc.JdbcSQLException](
-          "Table \"FAKE_TABLE\" not found"
+          "Table \"BOOOKK\" not found"
         ).await
-        result must beTypedEqualTo(None: Option[Int]).await
+        result must beNone.await
     }
 
   }
