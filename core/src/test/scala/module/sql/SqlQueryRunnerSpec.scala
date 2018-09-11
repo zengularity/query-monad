@@ -125,9 +125,11 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
     // execute async queries
     "retrieve int value fetch in an async context" in {
       import scala.concurrent.Future
+      import scala.concurrent.duration._
       import anorm.{SQL, SqlParser}
       import acolyte.jdbc.RowLists
       import acolyte.jdbc.Implicits._
+
       val queryResult: AcolyteQueryResult =
         (RowLists.rowList1(classOf[Int] -> "res").append(5))
       val withSqlConnection: WithSqlConnection =
@@ -136,13 +138,16 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
       val query =
         SqlQueryT { implicit connection =>
           Future {
-            Thread.sleep(900) // to simulate a slow-down
+            Thread.sleep(1000) // to simulate a slow-down
             SQL("SELECT 5 as res")
               .as(SqlParser.int("res").single)
           }
         }
 
-      runner(query) aka "result" must beTypedEqualTo(5).await
+      runner(query) aka "result" must beTypedEqualTo(5).await(
+        retries = 1,
+        timeout = 2.seconds
+      )
     }
   }
 

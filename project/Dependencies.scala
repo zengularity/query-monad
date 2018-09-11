@@ -9,5 +9,9 @@ object Dependencies {
 
   lazy val h2 = "com.h2database" % "h2" % "1.4.196"
 
+  lazy val psqlEmbedded = "ru.yandex.qatools.embed" % "postgresql-embedded" % "2.9"
+
+  lazy val postgresql = "org.postgresql" % "postgresql" % "42.2.2"
+
   lazy val specs2 = "org.specs2" %% "specs2-core" % "4.0.2"
 }

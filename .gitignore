@@ -5,4 +5,7 @@ src_managed/
 project/plugins/project/
 project/target
 logs/
+.idea/
+.idea/modules
+**/*.iml
 .DS_STORE
