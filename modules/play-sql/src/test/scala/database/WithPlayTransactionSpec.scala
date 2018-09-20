@@ -178,9 +178,10 @@ class WithPlayTransactionSpec(implicit ee: ExecutionEnv)
             implicit c =>
               SQL"insert into author values (3, 'Josh Suereth')".executeInsert()
           )
-          _ <- SqlQuery( implicit c =>
-            SQL"insert into boookk values (3, 'Sbt in action', 2014, 'O''Reilly', 3)"
-              .executeInsert()
+          _ <- SqlQuery(
+            implicit c =>
+              SQL"insert into boookk values (3, 'Sbt in action', 2014, 'O''Reilly', 3)"
+                .executeInsert()
           )
         } yield ()
         val queryResult = runner(query)
