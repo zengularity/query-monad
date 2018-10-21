@@ -26,7 +26,11 @@ object ComposeWithCompletion extends LowPriorityCompose {
           onComplete: In => Unit
       )(implicit ec: ExecutionContext): Outer =
         f(resource).andThen {
-          case _ => onComplete(resource)
+          case _ =>
+            println(
+              s"==========================>>>>>> compose completion: $toString"
+            )
+            onComplete(resource)
         }
 
       override val toString = "futureOut"
@@ -43,7 +47,13 @@ trait LowPriorityCompose { _: ComposeWithCompletion.type =>
       def apply[In](resource: In, f: In => F[A])(
           onComplete: In => Unit
       )(implicit ec: ExecutionContext): Outer =
-        Future(f(resource)).andThen { case _ => onComplete(resource) }
+        Future(f(resource)).andThen {
+          case _ =>
+            println(
+              s"==========================>>>>>> compose completion: $toString"
+            )
+            onComplete(resource)
+        }
 
       override val toString = "pureOut"
     }
