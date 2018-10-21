@@ -90,7 +90,8 @@ lazy val playSqlModule = (project in file("modules/play-sql"))
       Dependencies.acolytePlay % Test,
       Dependencies.anorm       % Test,
       Dependencies.h2          % Test,
-      Dependencies.specs2      % Test
+      Dependencies.scalaLogging,
+      Dependencies.specs2 % Test
     )
   )
   .dependsOn(core % "test->test;compile->compile")

@@ -1,28 +1,34 @@
 package com.zengularity.querymonad.module.playsql.database
 
 import java.sql.Connection
+
+// import com.typesafe.scalalogging.Logger
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
+
 import play.api.db.Database
 
 import com.zengularity.querymonad.module.sql.WithSqlConnection
 
-class WithPlayTransaction(db: Database) extends WithSqlConnection {
-  def apply[A](f: Connection => A): A = {
+class WithPlayTransaction(db: Database)(implicit ec: ExecutionContext)
+    extends WithSqlConnection {
+
+  // val logger = Logger[WithPlayTransaction]
+
+  def apply[A](f: Connection => Future[A]): Future[A] = {
     lazy val connection = db.getConnection(false)
-    val result = try {
-      f(connection)
-    } catch {
-      case ex: Throwable =>
+    val result = f(connection).andThen {
+      case Success(x) =>
+        connection.commit()
+        x
+      case Failure(_) =>
+        // logger.debug(
+        //   s"an error occurred when runnning the operation on database: $ex"
+        // )
         connection.rollback()
-        throw ex
     }
+    result.onComplete(_ => connection.close())
     result
   }
 
-  def releaseIfNecessary(connection: Connection): Unit = {
-    try {
-      connection.commit()
-    } finally {
-      connection.close()
-    }
-  }
 }

@@ -2,7 +2,7 @@ package com.zengularity.querymonad.module
 
 import java.sql.Connection
 
-import scala.concurrent.ExecutionContext
+// import scala.concurrent.ExecutionContext
 import scala.language.higherKinds
 
 import cats.Applicative
@@ -64,7 +64,7 @@ package object sql {
   object SqlQueryRunner {
     def apply(
         wc: WithSqlConnection
-    )(implicit ec: ExecutionContext): SqlQueryRunner =
+    ) /*(implicit ec: ExecutionContext)*/: SqlQueryRunner =
       QueryRunner[Connection](wc)
   }
 
