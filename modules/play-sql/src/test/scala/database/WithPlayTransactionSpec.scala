@@ -10,8 +10,7 @@ import com.zengularity.querymonad.module.sql.SqlQuery
 import com.zengularity.querymonad.test.module.playsql.utils.WithPlayTransactionUseCases._
 
 class WithPlayTransactionSpec(implicit ee: ExecutionEnv) extends Specification {
-  "Acolyte/Play JDBC" title
-
+  
   implicit val ec = ee.executionContext
 
   "WithPlayTransaction" should {

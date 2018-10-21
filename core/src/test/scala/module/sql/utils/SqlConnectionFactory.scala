@@ -3,6 +3,7 @@ package com.zengularity.querymonad.test.module.sql.utils
 import java.sql.Connection
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import acolyte.jdbc.{
   AcolyteDSL,
@@ -19,19 +20,22 @@ object SqlConnectionFactory {
   ): WithSqlConnection =
     new WithSqlConnection {
       def apply[B](f: Connection => Future[B]): Future[B] =
-        AcolyteDSL.withQueryResult(resultsSet)(f)
+        AcolyteDSL.withQueryResult(resultsSet) { connection =>
+          val result = f(connection)
+          result.onComplete(_ => connection.close())
+          result
+        }
 
-      def releaseIfNecessary(connection: Connection): Unit = connection.close()
     }
 
   def withSqlConnection(handler: ScalaCompositeHandler): WithSqlConnection =
     new WithSqlConnection {
       def apply[B](f: Connection => Future[B]): Future[B] = {
         val con = AcolyteDSL.connection(handler)
-        f(con)
+        val result = f(con)
+        result.onComplete(_ => con.close())
+        result
       }
-
-      def releaseIfNecessary(connection: Connection): Unit = connection.close()
     }
 
 }
