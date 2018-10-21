@@ -20,8 +20,10 @@ object ComposeWithCompletion extends LowPriorityCompose {
     new ComposeWithCompletion[Future, A] {
       type Outer = A
 
-      def apply[In](loaner: WithResource[In],
-                    f: In => Future[A]): Future[Outer] = loaner(f)
+      def apply[In](
+          loaner: WithResource[In],
+          f: In => Future[A]
+      ): Future[Outer] = loaner(f)
 
       override val toString = "futureOut"
     }

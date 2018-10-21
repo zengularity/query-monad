@@ -55,20 +55,19 @@ object WithPlayTransactionUseCases {
       .withUpdateHandler {
         case UpdateExecution("insert into author values (2, 'Sam Haliday')",
                              Nil) =>
-          if (step.get() == 0) step.set(1)
+          val _ = step.compareAndSet(0, 1)
           1
         case UpdateExecution(
             "insert into book values (2, 'Functional programming in Scala for mortals', 2018, 'Packt', 2)",
             Nil
             ) =>
-          if (step.get() == 1) step.set(2)
+          val _ = step.compareAndSet(1, 2)
           1
         case u => throw new SQLException(s"Unexpected updated: $u")
       }
     val resHandler: acolyte.jdbc.ResourceHandler =
       AcolyteDSL.handleTransaction(whenCommit = { _ =>
-        if (step.get() == 2) step.set(3)
-        else throw new SQLException("Unexpected commit")
+        val _ = step.compareAndSet(2, 3)
       })
     val database: Database = new AcolyteDatabase(handler, resHandler)
     val withSqlConnection: WithSqlConnection =
@@ -84,15 +83,14 @@ object WithPlayTransactionUseCases {
       .withUpdateHandler {
         case UpdateExecution("insert into fake_table values (2, 100, 2)",
                              Nil) =>
-          if (step.get() == 0) step.set(1)
+          val _ = step.compareAndSet(0, 1)
           throw new SQLException(
             "ERROR: relation \"fake_table\" does not exist"
           )
         case u => throw new SQLException(s"Unexpected update: $u")
       }
     val resHandler = AcolyteDSL.handleTransaction(whenRollback = { _ =>
-      if (step.get() == 1) step.set(2)
-      else throw new SQLException("Unexpected rollback")
+      val _ = step.compareAndSet(1, 2)
     })
     val database: Database = new AcolyteDatabase(handler, resHandler)
     val withSqlConnection: WithSqlConnection =
@@ -108,19 +106,18 @@ object WithPlayTransactionUseCases {
       .withUpdateHandler {
         case UpdateExecution("insert into author values (3, 'Josh Suereth')",
                              Nil) =>
-          if (step.get() == 0) step.set(1)
+          step.compareAndSet(0, 1)
           1
         case UpdateExecution(
             "insert into boookk values (3, 'Sbt in action', 2014, 'O''Reilly', 3)",
             Nil
             ) =>
-          if (step.get() == 1) step.set(2)
+          val _ = step.compareAndSet(1, 2)
           throw new SQLException("ERROR: relation \"boookk\" does not exist")
         case u => throw new SQLException(s"Unexpected update: $u")
       }
     val resHandler = AcolyteDSL.handleTransaction(whenRollback = { _ =>
-      if (step.get() == 2) step.set(3)
-      else throw new SQLException("Unexpected rollback")
+      val _ = step.compareAndSet(2, 3)
     })
     val database: Database = new AcolyteDatabase(handler, resHandler)
     val withSqlConnection: WithSqlConnection =

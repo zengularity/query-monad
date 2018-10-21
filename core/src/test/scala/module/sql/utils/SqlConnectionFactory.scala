@@ -21,9 +21,7 @@ object SqlConnectionFactory {
     new WithSqlConnection {
       def apply[B](f: Connection => Future[B]): Future[B] =
         AcolyteDSL.withQueryResult(resultsSet) { connection =>
-          val result = f(connection)
-          result.onComplete(_ => connection.close())
-          result
+          f(connection).andThen { case _ => connection.close() }
         }
 
     }
@@ -32,9 +30,7 @@ object SqlConnectionFactory {
     new WithSqlConnection {
       def apply[B](f: Connection => Future[B]): Future[B] = {
         val con = AcolyteDSL.connection(handler)
-        val result = f(con)
-        result.onComplete(_ => con.close())
-        result
+        f(con).andThen { case _ => con.close() }
       }
     }
 

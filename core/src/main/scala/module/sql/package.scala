@@ -62,9 +62,7 @@ package object sql {
   type SqlQueryRunner = QueryRunner[Connection]
 
   object SqlQueryRunner {
-    def apply(
-        wc: WithSqlConnection
-    ) /*(implicit ec: ExecutionContext)*/: SqlQueryRunner =
+    def apply(wc: WithSqlConnection): SqlQueryRunner =
       QueryRunner[Connection](wc)
   }
 
