@@ -8,15 +8,12 @@ package object database {
   type Query[Resource, A] = Reader[Resource, A]
 
   object Query {
-//    def pure[Resource, A](a: A) = ReaderT.pure[Id, Resource, A](a)
     def pure[F[_]: Applicative, Resource, A](a: A): Kleisli[F, Resource, A] =
       ReaderT.pure[F, Resource, A](a)
 
-//    def ask[F[_]: Applicative, Resource] = ReaderT.ask[F, Resource]
     def ask[F[_]: Applicative, Resource]: Kleisli[F, Resource, Resource] =
       ReaderT.ask[F, Resource]
 
-//    def apply[Resource, A](f: Resource => A) = new Query(f)
     def apply[Resource, A](f: Resource => A) =
       new Query(f)
   }
@@ -29,13 +26,13 @@ package object database {
     ): QueryT[F, Resource, A] =
       new QueryT(run)
 
-    def pure[F[_]: Applicative, Resource, A](a: A) =
+    def pure[F[_]: Applicative, Resource, A](a: A): Kleisli[F, Resource, A] =
       ReaderT.pure[F, Resource, A](a)
 
-    def ask[F[_]: Applicative, Resource] =
+    def ask[F[_]: Applicative, Resource]: Kleisli[F, Resource, Resource] =
       ReaderT.ask[F, Resource]
 
-    def liftF[F[_], Resource, A](ma: F[A]) =
+    def liftF[F[_], Resource, A](ma: F[A]): Kleisli[F, Resource, A] =
       ReaderT.liftF[F, Resource, A](ma)
 
     def lift[F[_], Resource, A](

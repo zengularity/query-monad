@@ -23,15 +23,12 @@ package object sql {
   type SqlQuery[A] = Query[Connection, A]
 
   object SqlQuery {
-//    def pure[A](a: A) = Query.pure[Connection, A](a)
     def pure[F[_]: Applicative, A](a: A): Kleisli[F, Connection, A] =
       Query.pure[F, Connection, A](a)
 
-//    val ask = Query.ask[Connection]
     def ask[F[_]: Applicative]: Kleisli[F, Connection, Connection] =
       Query.ask[F, Connection]
 
-//    def apply[A](f: Connection => A) = new SqlQuery(f)
     def apply[A](f: Connection => A) = new SqlQuery(f)
   }
 
