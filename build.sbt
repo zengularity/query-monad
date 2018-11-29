@@ -4,7 +4,7 @@ name := "query-monad-code"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.12.6"
+scalaVersion in ThisBuild := "2.12.7"
 
 // Common values
 val commonSettings = Seq(
@@ -16,6 +16,7 @@ val commonSettings = Seq(
     "utf-8", // Specify character encoding used by source files.
     "-explaintypes", // Explain type errors in more detail.
     "-feature", // Emit warning and location for usages of features that should be imported explicitly.
+    "-language:higherKinds", // Allow higher-kinded types
     "-unchecked", // Enable additional warnings where generated code depends on assumptions.
     "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
     "-Xfatal-warnings", // Fail the compilation if there are any warnings.

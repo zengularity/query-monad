@@ -10,6 +10,8 @@ import play.api.mvc.Results._
 import play.api.routing.Router
 import play.api.routing.sird._
 
+import cats.instances.future._
+
 import com.zengularity.querymonad.module.sql.{
   SqlQuery,
   SqlQueryRunner,
@@ -25,7 +27,9 @@ class AppComponents(context: Context)
 
   val db = dbApi.database("default")
 
-  val queryRunner = SqlQueryRunner(new WithPlayTransaction(db))
+  val queryRunner: SqlQueryRunner[Future] = SqlQueryRunner(
+    new WithPlayTransaction(db)
+  )
 
   val router: Router = Router.from {
 
@@ -57,10 +61,12 @@ class AppComponents(context: Context)
       Action.async {
         val query =
           for {
-            number <- SqlQuery.pure(42)
-            text <- SqlQuery(
+            number <- SqlQueryT.pure(42)
+            text <- SqlQueryT(
               implicit c =>
-                SQL"select $cmd as result".as(SqlParser.str("result").single)
+                Future {
+                  SQL"select $cmd as result".as(SqlParser.str("result").single)
+              }
             )
           } yield (text + number)
 

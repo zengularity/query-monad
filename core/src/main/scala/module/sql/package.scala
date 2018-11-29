@@ -1,6 +1,7 @@
 package com.zengularity.querymonad.module
 
 import java.sql.Connection
+import cats.data.Kleisli
 
 // import scala.concurrent.ExecutionContext
 import scala.language.higherKinds
@@ -22,10 +23,15 @@ package object sql {
   type SqlQuery[A] = Query[Connection, A]
 
   object SqlQuery {
-    def pure[A](a: A) = Query.pure[Connection, A](a)
+//    def pure[A](a: A) = Query.pure[Connection, A](a)
+    def pure[F[_]: Applicative, A](a: A): Kleisli[F, Connection, A] =
+      Query.pure[F, Connection, A](a)
 
-    val ask = Query.ask[Connection]
+//    val ask = Query.ask[Connection]
+    def ask[F[_]: Applicative]: Kleisli[F, Connection, Connection] =
+      Query.ask[F, Connection]
 
+//    def apply[A](f: Connection => A) = new SqlQuery(f)
     def apply[A](f: Connection => A) = new SqlQuery(f)
   }
 
@@ -59,14 +65,16 @@ package object sql {
 
   type SqlQueryE[A, Err] = QueryE[Connection, A, Err]
 
+  // TODO move into SqlQueryRunner companion?
   // Query runner aliases
-  type WithSqlConnection = WithResource[Connection]
+  type WithSqlConnection[F[_]] = WithResource[F, Connection]
 
-  type SqlQueryRunner = QueryRunner[Connection]
+  // java.sql.Connection runner
+  type SqlQueryRunner[F[_]] = QueryRunner[F, Connection]
 
   object SqlQueryRunner {
-    def apply(wc: WithSqlConnection): SqlQueryRunner =
-      QueryRunner[Connection](wc)
+    def apply[F[_]](wc: WithSqlConnection[F]): SqlQueryRunner[F] =
+      QueryRunner[F, Connection](wc)
   }
 
 }

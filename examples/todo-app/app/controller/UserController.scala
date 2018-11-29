@@ -18,7 +18,7 @@ import com.zengularity.querymonad.examples.todoapp.store.{
 import com.zengularity.querymonad.module.sql.{SqlQueryRunner, SqlQueryT}
 
 class UserController(
-    runner: SqlQueryRunner,
+    runner: SqlQueryRunner[Future],
     store: UserStore,
     credentialStore: CredentialStore,
     cc: ControllerComponents
