@@ -14,8 +14,8 @@ object SqlQueryE {
   def ask[Err] =
     QueryE.ask[Connection, Err]
 
-  def liftF[Err, A](option: Either[Err, A]) =
-    QueryE.liftF[Connection, Err, A](option)
+  def liftF[Err, A](either: Either[Err, A]) =
+    QueryE.liftF[Connection, Err, A](either)
 
   def lift[Err, A](query: SqlQuery[A]) =
     QueryE.lift[Connection, Err, A](query)
