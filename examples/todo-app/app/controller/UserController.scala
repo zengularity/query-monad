@@ -2,20 +2,18 @@ package com.zengularity.querymonad.examples.todoapp.controller
 
 import java.nio.charset.Charset
 import java.util.{Base64, UUID}
-
 import scala.concurrent.{ExecutionContext, Future}
 
 import cats.instances.either._
 import play.api.mvc._
 import play.api.libs.json.Json
-
 import com.zengularity.querymonad.examples.todoapp.controller.model.AddUserPayload
 import com.zengularity.querymonad.examples.todoapp.model.{Credential, User}
 import com.zengularity.querymonad.examples.todoapp.store.{
   CredentialStore,
   UserStore
 }
-import com.zengularity.querymonad.module.sql.{SqlQueryRunner, SqlQueryT}
+import com.zengularity.querymonad.module.sql.{SqlQueryE, SqlQueryRunner}
 
 class UserController(
     runner: SqlQueryRunner,
@@ -26,13 +24,11 @@ class UserController(
     extends AbstractController(cc)
     with Authentication {
 
-  type ErrorOrResult[A] = Either[String, A]
-
   def createUser: Action[AddUserPayload] =
     Action(parse.json[AddUserPayload]).async { implicit request =>
       val payload = request.body
       val query = for {
-        _ <- SqlQueryT.fromQuery[ErrorOrResult, Unit](
+        _ <- SqlQueryE.fromQuery[String, Unit](
           store.getByLogin(payload.login).map {
             case Some(_) => Left("User already exists")
             case None    => Right(())
@@ -42,10 +38,10 @@ class UserController(
         user = AddUserPayload.toModel(payload)(UUID.randomUUID())
         credential = AddUserPayload.toCredential(payload)
 
-        _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](
+        _ <- SqlQueryE.liftQuery[String, Unit](
           credentialStore.saveCredential(credential)
         )
-        _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](store.createUser(user))
+        _ <- SqlQueryE.liftQuery[String, Unit](store.createUser(user))
       } yield ()
 
       runner(query).map {
@@ -83,7 +79,7 @@ class UserController(
       .map(_.substring("Basic".length()).trim())
 
     val query = for {
-      credential <- SqlQueryT.liftF[ErrorOrResult, Credential](
+      credential <- SqlQueryE.liftF[String, Credential](
         authHeaderOpt
           .map { encoded =>
             val decoded = Base64.getDecoder().decode(encoded)
@@ -96,19 +92,19 @@ class UserController(
           .toRight("Missing credentials")
       )
 
-      exists <- SqlQueryT.liftQuery[ErrorOrResult, Boolean](
+      exists <- SqlQueryE.liftQuery[String, Boolean](
         credentialStore.check(credential)
       )
 
       user <- {
         if (exists)
-          SqlQueryT.fromQuery[ErrorOrResult, User](
+          SqlQueryE.fromQuery[String, User](
             store
               .getByLogin(credential.login)
               .map(_.toRight("The user doesn't exist"))
           )
         else
-          SqlQueryT.liftF[ErrorOrResult, User](Left("Wrong credentials"))
+          SqlQueryE.liftF[String, User](Left("Wrong credentials"))
       }
     } yield user
 
@@ -122,5 +118,4 @@ class UserController(
   def logout: Action[AnyContent] = ConnectedAction {
     NoContent.withNewSession
   }
-
 }

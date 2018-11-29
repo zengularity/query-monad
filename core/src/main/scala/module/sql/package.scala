@@ -46,7 +46,7 @@ package object sql {
     def lift[M[_], A](
         query: SqlQuery[A]
     )(implicit F: Applicative[M]) =
-      SqlQueryT[M, A](query.map(F.pure).run)
+      QueryT.lift[M, Connection, A](query)
 
     def fromQuery[M[_], A](query: SqlQuery[M[A]]) =
       QueryT.fromQuery[M, Connection, A](query)
@@ -57,7 +57,7 @@ package object sql {
 
   type SqlQueryO[A] = QueryO[Connection, A]
 
-  type SqlQueryE[A, Err] = QueryE[Connection, A, Err]
+  type SqlQueryE[A, Err] = QueryE[Connection, Err, A]
 
   // Query runner aliases
   type WithSqlConnection = WithResource[Connection]

@@ -56,5 +56,5 @@ package object database {
   type QueryO[Resource, A] = QueryT[Option, Resource, A]
 
   type QueryE[Resource, Err, A] =
-    QueryT[({ type F[T] = Either[Err, T] })#F, Resource, A]
+    QueryT[Either[Err, ?], Resource, A]
 }

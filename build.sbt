@@ -47,6 +47,9 @@ val commonSettings = Seq(
   )),
   resolvers ++= Seq[Resolver](
     Resolver.sonatypeRepo("releases")
+  ),
+  addCompilerPlugin(
+    "org.spire-math" % "kind-projector" % "0.9.8" cross CrossVersion.binary
   )
 )
 

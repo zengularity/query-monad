@@ -1,17 +1,15 @@
 package com.zengularity.querymonad.examples.todoapp.controller
 
 import java.util.UUID
-
 import scala.concurrent.{ExecutionContext, Future}
 
 import cats.instances.either._
 import play.api.mvc._
 import play.api.libs.json.Json
-
 import com.zengularity.querymonad.examples.todoapp.controller.model.AddTodoPayload
 import com.zengularity.querymonad.examples.todoapp.model.{Todo, User}
 import com.zengularity.querymonad.examples.todoapp.store.{TodoStore, UserStore}
-import com.zengularity.querymonad.module.sql.{SqlQueryRunner, SqlQueryT}
+import com.zengularity.querymonad.module.sql.{SqlQueryE, SqlQueryRunner}
 
 class TodoController(
     runner: SqlQueryRunner,
@@ -21,8 +19,6 @@ class TodoController(
 )(implicit val ec: ExecutionContext)
     extends AbstractController(cc)
     with Authentication {
-
-  type ErrorOrResult[A] = Either[String, A]
 
   private def check(
       login: String
@@ -40,13 +36,13 @@ class TodoController(
         val todo = AddTodoPayload.toModel(payload)(UUID.randomUUID(),
                                                    request.userInfo.id)
         val query = for {
-          _ <- SqlQueryT.fromQuery[ErrorOrResult, Unit](
+          _ <- SqlQueryE.fromQuery[String, Unit](
             todoStore.getByNumber(todo.todoNumber).map {
               case Some(_) => Left("Todo already exists")
               case None    => Right(())
             }
           )
-          _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](
+          _ <- SqlQueryE.liftQuery[String, Unit](
             todoStore.addTodo(todo)
           )
         } yield ()
@@ -72,10 +68,10 @@ class TodoController(
     ConnectedAction.async { implicit request =>
       check(login) {
         val query = for {
-          user <- SqlQueryT.fromQuery[ErrorOrResult, User](
+          user <- SqlQueryE.fromQuery[String, User](
             userStore.getByLogin(login).map(_.toRight("User doesn't exist"))
           )
-          todo <- SqlQueryT.liftQuery[ErrorOrResult, List[Todo]](
+          todo <- SqlQueryE.liftQuery[String, List[Todo]](
             todoStore.listTodo(user.id)
           )
         } yield todo
@@ -91,12 +87,12 @@ class TodoController(
     ConnectedAction.async { implicit request =>
       check(login) {
         val query = for {
-          - <- SqlQueryT.fromQuery[ErrorOrResult, Todo](
+          - <- SqlQueryE.fromQuery[String, Todo](
             todoStore
               .getTodo(todoId)
               .map(_.toRight("Todo doesn't exist"))
           )
-          _ <- SqlQueryT.liftQuery[ErrorOrResult, Unit](
+          _ <- SqlQueryE.liftQuery[String, Unit](
             todoStore.removeTodo(todoId)
           )
         } yield ()
@@ -117,5 +113,4 @@ class TodoController(
         }
       }
     }
-
 }
