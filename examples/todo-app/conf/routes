@@ -1,0 +1,14 @@
+## User API
+POST          /api/login                                    com.zengularity.querymonad.examples.todoapp.controller.UserController.login
+POST          /api/logout                                   com.zengularity.querymonad.examples.todoapp.controller.UserController.logout
+
+POST          /api/user                                     com.zengularity.querymonad.examples.todoapp.controller.UserController.createUser
+GET           /api/user/:userId                             com.zengularity.querymonad.examples.todoapp.controller.UserController.getUser(userId: UUID)
+DELETE        /api/user/:userId                             com.zengularity.querymonad.examples.todoapp.controller.UserController.deleteUser(userId: UUID)
+
+## Todo API
+POST          /api/user/:login/todo                         com.zengularity.querymonad.examples.todoapp.controller.TodoController.addTodo(login: String)
+GET           /api/user/:login/todo/:todoId                 com.zengularity.querymonad.examples.todoapp.controller.TodoController.getTodo(login: String, todoId: UUID)
+GET           /api/user/:login/todo                         com.zengularity.querymonad.examples.todoapp.controller.TodoController.listTodo(login: String)
+PUT           /api/user/:login/todo/:todoId                 com.zengularity.querymonad.examples.todoapp.controller.TodoController.completeTodo(login: String, todoId: UUID)
+DELETE        /api/user/:login/todo/:todoId                 com.zengularity.querymonad.examples.todoapp.controller.TodoController.removeTodo(login: String, todoId: UUID)

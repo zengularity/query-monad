@@ -111,8 +111,25 @@ lazy val sampleAppExample = (project in file("examples/sample-app"))
   )
   .dependsOn(core, playSqlModule)
 
+lazy val todoAppExample = (project in file("examples/todo-app"))
+  .enablePlugins(PlayScala)
+  .settings(commonSettings)
+  .settings(
+    name := "todo-app-example",
+    libraryDependencies ++= Seq(
+      evolutions,
+      Dependencies.anorm,
+      Dependencies.postgres,
+      Dependencies.jbcrypt
+    ),
+    play.sbt.routes.RoutesKeys.routesImport := Seq(
+      "java.util.UUID"
+    )
+  )
+  .dependsOn(core, playSqlModule)
+
 // Aggregate all projects
 
 lazy val root: Project = project
   .in(file("."))
-  .aggregate(core, sampleAppExample, playSqlModule)
+  .aggregate(core, playSqlModule, sampleAppExample, todoAppExample)

@@ -44,6 +44,13 @@ package object database {
         query: Query[Resource, M[A]]
     ): QueryT[M, Resource, A] =
       QueryT[M, Resource, A](query.run)
+
+    def liftQuery[M[_]: Applicative, Resource, A](
+        query: Query[Resource, A]
+    ): QueryT[M, Resource, A] =
+      QueryT.fromQuery[M, Resource, A](
+        query.map(implicitly[Applicative[M]].pure)
+      )
   }
 
   type QueryO[Resource, A] = QueryT[Option, Resource, A]
