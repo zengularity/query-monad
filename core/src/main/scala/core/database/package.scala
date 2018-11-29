@@ -55,6 +55,8 @@ package object database {
 
   type QueryO[Resource, A] = QueryT[Option, Resource, A]
 
+  type QueryList[Resource, A] = QueryT[List, Resource, A]
+
   type QueryE[Resource, Err, A] =
     QueryT[Either[Err, ?], Resource, A]
 }
