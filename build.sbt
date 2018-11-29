@@ -1,10 +1,8 @@
-import Dependencies._
-
 name := "query-monad-code"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion in ThisBuild := "2.12.6"
+scalaVersion in ThisBuild := "2.12.7"
 
 // Common values
 val commonSettings = Seq(
@@ -51,12 +49,9 @@ val commonSettings = Seq(
 )
 
 // Scalafmt
-scalafmtOnCompile in ThisBuild := true
-scalafmtOnCompile := true
-scalafmtTestOnCompile in ThisBuild := true
-scalafmtTestOnCompile := true
-scalafmtConfig in ThisBuild := file("project/scalafmt.conf")
+ThisBuild / scalafmtOnCompile := true
 
+// Wartremover
 wartremoverErrors ++= Warts.unsafe
 
 //
@@ -71,7 +66,7 @@ lazy val core = (project in file("core"))
       name := "query-core",
       libraryDependencies ++= Seq(
         Dependencies.acolyte % Test,
-        Dependencies.anorm   % Test,
+        Dependencies.anorm % Test,
         Dependencies.cats,
         Dependencies.specs2 % Test
       )
@@ -84,12 +79,12 @@ lazy val playSqlModule = (project in file("modules/play-sql"))
     name := "query-play-sql",
     libraryDependencies ++= Seq(
       jdbc,
-      evolutions               % Test,
-      logback                  % Test,
-      Dependencies.acolyte     % Test,
+      evolutions % Test,
+      logback % Test,
+      Dependencies.acolyte % Test,
       Dependencies.acolytePlay % Test,
-      Dependencies.anorm       % Test,
-      Dependencies.h2          % Test,
+      Dependencies.anorm % Test,
+      Dependencies.h2 % Test,
       Dependencies.scalaLogging,
       Dependencies.specs2 % Test
     )
