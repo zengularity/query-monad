@@ -1,7 +1,7 @@
 package com.zengularity.querymonad.core.database
 
-trait WithResource[Resource] {
-  def apply[A](f: Resource => A): A
+import scala.concurrent.Future
 
-  def releaseIfNecessary(resource: Resource): Unit
+trait WithResource[Resource] {
+  def apply[A](f: Resource => Future[A]): Future[A]
 }

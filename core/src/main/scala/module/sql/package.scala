@@ -1,8 +1,8 @@
-package com.zengularity.querymonad.core.module
+package com.zengularity.querymonad.module
 
 import java.sql.Connection
 
-import scala.concurrent.ExecutionContext
+// import scala.concurrent.ExecutionContext
 import scala.language.higherKinds
 
 import cats.Applicative
@@ -43,6 +43,11 @@ package object sql {
 
     def liftF[M[_], A](ma: M[A]) = QueryT.liftF[M, Connection, A](ma)
 
+    def lift[M[_], A](
+        query: SqlQuery[A]
+    )(implicit F: Applicative[M]) =
+      SqlQueryT[M, A](query.map(F.pure).run)
+
     def fromQuery[M[_], A](query: SqlQuery[M[A]]) =
       QueryT.fromQuery[M, Connection, A](query)
   }
@@ -57,9 +62,7 @@ package object sql {
   type SqlQueryRunner = QueryRunner[Connection]
 
   object SqlQueryRunner {
-    def apply(
-        wc: WithSqlConnection
-    )(implicit ec: ExecutionContext): SqlQueryRunner =
+    def apply(wc: WithSqlConnection): SqlQueryRunner =
       QueryRunner[Connection](wc)
   }
 
