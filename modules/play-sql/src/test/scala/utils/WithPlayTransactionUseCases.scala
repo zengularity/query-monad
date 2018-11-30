@@ -12,29 +12,32 @@ import acolyte.jdbc.RowLists.{rowList1, rowList2}
 import org.specs2.execute.Result
 import play.api.db.Database
 
-import com.zengularity.querymonad.module.sql.{SqlQueryRunner, WithSqlConnection}
+import com.zengularity.querymonad.module.sql.future.{
+  SqlQueryRunnerF,
+  WithSqlConnectionF
+}
 import com.zengularity.querymonad.module.playsql.database.WithPlayTransaction
 
 object WithPlayTransactionUseCases {
 
   private def testRunner[A](in: A)(f: A => Result) = f(in)
 
-  val test = testRunner[SqlQueryRunner] _
+  val test = testRunner[SqlQueryRunnerF] _
 
-  def test1 = testRunner[(SqlQueryRunner, AtomicReference[Int])] _
+  def test1 = testRunner[(SqlQueryRunnerF, AtomicReference[Int])] _
 
-  def useCase1(implicit ec: ExecutionContext): SqlQueryRunner = {
+  def useCase1(implicit ec: ExecutionContext): SqlQueryRunnerF = {
     val queryResult = rowList1(
       classOf[String] -> "author_name"
     ) :+ ("Martin Odersky")
     val database: Database =
       new AcolyteDatabase(AcolyteDSL.handleQuery(_ ⇒ queryResult))
-    val withSqlConnection: WithSqlConnection =
+    val withSqlConnection: WithSqlConnectionF =
       new WithPlayTransaction(database)
-    SqlQueryRunner(withSqlConnection)
+    SqlQueryRunnerF(withSqlConnection)
   }
 
-  def useCase2(implicit ec: ExecutionContext): SqlQueryRunner = {
+  def useCase2(implicit ec: ExecutionContext): SqlQueryRunnerF = {
     val queryResult =
       rowList2(
         classOf[String] -> "author_name",
@@ -42,14 +45,14 @@ object WithPlayTransactionUseCases {
       ) :+ ("Martin Odersky", "Programming in Scala")
     val database: Database =
       new AcolyteDatabase(AcolyteDSL.handleQuery(_ ⇒ queryResult))
-    val withSqlConnection: WithSqlConnection =
+    val withSqlConnection: WithSqlConnectionF =
       new WithPlayTransaction(database)
-    SqlQueryRunner(withSqlConnection)
+    SqlQueryRunnerF(withSqlConnection)
   }
 
   def useCase3(
       implicit ec: ExecutionContext
-  ): (SqlQueryRunner, AtomicReference[Int]) = {
+  ): (SqlQueryRunnerF, AtomicReference[Int]) = {
     val step: AtomicReference[Int] = new AtomicReference(0)
     val handler = AcolyteDSL.handleStatement
       .withUpdateHandler {
@@ -70,14 +73,14 @@ object WithPlayTransactionUseCases {
         val _ = step.compareAndSet(2, 3)
       })
     val database: Database = new AcolyteDatabase(handler, resHandler)
-    val withSqlConnection: WithSqlConnection =
+    val withSqlConnection: WithSqlConnectionF =
       new WithPlayTransaction(database)
-    (SqlQueryRunner(withSqlConnection), step)
+    (SqlQueryRunnerF(withSqlConnection), step)
   }
 
   def useCase4(
       implicit ec: ExecutionContext
-  ): (SqlQueryRunner, AtomicReference[Int]) = {
+  ): (SqlQueryRunnerF, AtomicReference[Int]) = {
     val step: AtomicReference[Int] = new AtomicReference(0)
     val handler = AcolyteDSL.handleStatement
       .withUpdateHandler {
@@ -93,14 +96,14 @@ object WithPlayTransactionUseCases {
       val _ = step.compareAndSet(1, 2)
     })
     val database: Database = new AcolyteDatabase(handler, resHandler)
-    val withSqlConnection: WithSqlConnection =
+    val withSqlConnection: WithSqlConnectionF =
       new WithPlayTransaction(database)
-    (SqlQueryRunner(withSqlConnection), step)
+    (SqlQueryRunnerF(withSqlConnection), step)
   }
 
   def useCase5(
       implicit ec: ExecutionContext
-  ): (SqlQueryRunner, AtomicReference[Int]) = {
+  ): (SqlQueryRunnerF, AtomicReference[Int]) = {
     val step: AtomicReference[Int] = new AtomicReference(0)
     val handler = AcolyteDSL.handleStatement
       .withUpdateHandler {
@@ -120,9 +123,9 @@ object WithPlayTransactionUseCases {
       val _ = step.compareAndSet(2, 3)
     })
     val database: Database = new AcolyteDatabase(handler, resHandler)
-    val withSqlConnection: WithSqlConnection =
+    val withSqlConnection: WithSqlConnectionF =
       new WithPlayTransaction(database)
-    (SqlQueryRunner(withSqlConnection), step)
+    (SqlQueryRunnerF(withSqlConnection), step)
   }
 
 }

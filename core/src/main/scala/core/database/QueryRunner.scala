@@ -1,29 +1,28 @@
 package com.zengularity.querymonad.core.database
 
-import scala.concurrent.Future
 import scala.language.higherKinds
 
 /**
  * A class who can run a Query.
  */
-sealed trait QueryRunner[Resource] {
+sealed trait QueryRunner[F[_], Resource] {
   def apply[M[_], T](query: QueryT[M, Resource, T])(
-      implicit compose: ComposeWithCompletion[M, T]
-  ): Future[compose.Outer]
+      implicit lift: LiftAsync[F, M, T]
+  ): F[lift.Outer]
 }
 
 object QueryRunner {
-  private class DefaultRunner[Resource](wr: WithResource[Resource])
-      extends QueryRunner[Resource] {
+  private class DefaultRunner[F[_], Resource](wr: WithResource[F, Resource])
+      extends QueryRunner[F, Resource] {
     def apply[M[_], T](
         query: QueryT[M, Resource, T]
-    )(implicit compose: ComposeWithCompletion[M, T]): Future[compose.Outer] =
-      compose(wr, query.run)
+    )(implicit lift: LiftAsync[F, M, T]): F[lift.Outer] =
+      lift(wr, query.run)
   }
 
   // Default factory
-  def apply[Resource](
-      wr: WithResource[Resource]
-  ): QueryRunner[Resource] =
+  def apply[F[_], Resource](
+      wr: WithResource[F, Resource]
+  ): QueryRunner[F, Resource] =
     new DefaultRunner(wr)
 }

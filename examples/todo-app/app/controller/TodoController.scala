@@ -11,10 +11,12 @@ import play.api.libs.json.Json
 import com.zengularity.querymonad.examples.todoapp.controller.model.AddTodoPayload
 import com.zengularity.querymonad.examples.todoapp.model.{Todo, User}
 import com.zengularity.querymonad.examples.todoapp.store.{TodoStore, UserStore}
-import com.zengularity.querymonad.module.sql.{SqlQueryRunner, SqlQueryT}
+import com.zengularity.querymonad.module.future.implicits._
+import com.zengularity.querymonad.module.sql.SqlQueryT
+import com.zengularity.querymonad.module.sql.future.SqlQueryRunnerF
 
 class TodoController(
-    runner: SqlQueryRunner,
+    runner: SqlQueryRunnerF,
     todoStore: TodoStore,
     userStore: UserStore,
     cc: ControllerComponents

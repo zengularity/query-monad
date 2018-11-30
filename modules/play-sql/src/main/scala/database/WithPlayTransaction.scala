@@ -11,7 +11,7 @@ import play.api.db.Database
 import com.zengularity.querymonad.module.sql.WithSqlConnection
 
 class WithPlayTransaction(db: Database)(implicit ec: ExecutionContext)
-    extends WithSqlConnection {
+    extends WithSqlConnection[Future] {
 
   val logger = Logger[WithPlayTransaction]
 

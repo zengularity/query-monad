@@ -15,10 +15,12 @@ import com.zengularity.querymonad.examples.todoapp.store.{
   CredentialStore,
   UserStore
 }
-import com.zengularity.querymonad.module.sql.{SqlQueryRunner, SqlQueryT}
+import com.zengularity.querymonad.module.future.implicits._
+import com.zengularity.querymonad.module.sql.future.SqlQueryRunnerF
+import com.zengularity.querymonad.module.sql.SqlQueryT
 
 class UserController(
-    runner: SqlQueryRunner,
+    runner: SqlQueryRunnerF,
     store: UserStore,
     credentialStore: CredentialStore,
     cc: ControllerComponents

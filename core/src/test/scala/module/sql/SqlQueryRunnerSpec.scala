@@ -12,9 +12,10 @@ import org.specs2.mutable.Specification
 import com.zengularity.querymonad.module.sql.{
   SqlQuery,
   SqlQueryRunner,
-  SqlQueryT,
-  WithSqlConnection
+  SqlQueryT
 }
+import com.zengularity.querymonad.module.future.implicits._
+import com.zengularity.querymonad.module.sql.future.WithSqlConnectionF
 import com.zengularity.querymonad.test.module.sql.models.{Material, Professor}
 import com.zengularity.querymonad.test.module.sql.utils.SqlConnectionFactory
 
@@ -23,7 +24,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
   "SqlQueryRunner" should {
     // execute lift Queries
     "return integer value lift in Query using pure" in {
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = SqlQuery.pure(1)
@@ -32,7 +33,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
     }
 
     "return optional value lift in Query using liftF" in {
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = SqlQueryT.liftF(Seq(1))
@@ -42,7 +43,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
 
     // execute single query
     "retrieve professor with id 1" in {
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(Professor.resultSet)
       val runner = SqlQueryRunner(withSqlConnection)
       val result = runner(Professor.fetchProfessor(1)).map(_.get)
@@ -53,7 +54,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
     }
 
     "retrieve material with id 1" in {
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(Material.resultSet)
       val runner = SqlQueryRunner(withSqlConnection)
       val result = runner(Material.fetchMaterial(1)).map(_.get)
@@ -64,7 +65,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
     }
 
     "not retrieve professor with id 2" in {
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
@@ -87,7 +88,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         case _ =>
           AcolyteQueryResult.Nil
       }
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(handler)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
@@ -109,7 +110,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         case _ =>
           AcolyteQueryResult.Nil
       }
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(handler)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
@@ -132,7 +133,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
 
       val queryResult: AcolyteQueryResult =
         (RowLists.rowList1(classOf[Int] -> "res").append(5))
-      val withSqlConnection: WithSqlConnection =
+      val withSqlConnection: WithSqlConnectionF =
         SqlConnectionFactory.withSqlConnection(queryResult)
       val runner = SqlQueryRunner(withSqlConnection)
       val query =
