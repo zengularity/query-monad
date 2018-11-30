@@ -91,7 +91,7 @@ class TodoController(
     ConnectedAction.async { implicit request =>
       check(login) {
         val query = for {
-          - <- SqlQueryT.fromQuery[ErrorOrResult, Todo](
+          _ <- SqlQueryT.fromQuery[ErrorOrResult, Todo](
             todoStore
               .getTodo(todoId)
               .map(_.toRight("Todo doesn't exist"))

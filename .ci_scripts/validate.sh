@@ -15,4 +15,4 @@ false
 
 echo "[INFO] Running tests" >> /dev/stdout
 
-sbt ++$TRAVIS_SCALA_VERSION testOnly
+sbt ++$TRAVIS_SCALA_VERSION test

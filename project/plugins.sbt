@@ -1,10 +1,5 @@
-val neoScalafmtVersion = "1.14"
-addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % neoScalafmtVersion)
-// addSbtPlugin("com.lucidchart" % "sbt-scalafmt-coursier" % neoScalafmtVersion)
+addSbtPlugin("com.geirsson"    % "sbt-scalafmt"    % "1.5.1")
+addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.3.7")
 
-// The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.10")
-
-// addSbtPlugin("io.get-coursier" % "sbt-coursier" % "1.0.0-RC13")
-
-addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.2.1")
+// The Play plugin, used for the play-sql module
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.6.20")
