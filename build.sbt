@@ -67,7 +67,7 @@ def commonSettings = Seq(
 ThisBuild / scalafmtOnCompile := true
 
 // Wartremover
-wartremoverErrors ++= Warts.unsafe
+// wartremoverErrors ++= Warts.unsafe // TODO properly configure linter and then clean up code
 
 //
 // Projects definitions
@@ -143,3 +143,12 @@ lazy val todoAppExample = (project in file("examples/todo-app"))
 lazy val root: Project = project
   .in(file("."))
   .aggregate(core, playSqlModule, sampleAppExample, todoAppExample)
+  .enablePlugins(GhpagesPlugin, SiteScaladocPlugin, ScalaUnidocPlugin)
+  .settings(
+    // Publish documentation
+    git.remoteRepo := "git@github.com:zengularity/query-monad.git",
+    ghpagesNoJekyll := true,
+    siteSubdirName in ScalaUnidoc := "api/latest",
+    addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+    unidocProjectFilter in (ScalaUnidoc, unidoc) := inProjects(core, playSqlModule)
+  )
