@@ -103,7 +103,7 @@ lazy val playSqlModule = (project in file("modules/play-sql"))
     libraryDependencies ++= Seq(
       jdbc,
       evolutions               % Test,
-      logback                  % Test,
+      Dependencies.logback     % Test,
       Dependencies.acolyte     % Test,
       Dependencies.acolytePlay % Test,
       Dependencies.anorm       % Test,
@@ -146,6 +146,20 @@ lazy val todoAppExample = (project in file("examples/todo-app"))
   )
   .dependsOn(core, playSqlModule)
 
+lazy val todoAppHttp4sExample = (project in file("examples/todo-app-http4s"))
+  .settings(
+    name := "todo-app-http4s",
+    libraryDependencies ++= Seq(
+      Dependencies.http4sBlazeServer,
+      Dependencies.http4sCirce,
+      Dependencies.http4sDsl,
+      Dependencies.specs2 % Test,
+      Dependencies.logback
+    ),
+    addCompilerPlugin("org.spire-math" %% "kind-projector"     % "0.9.6"),
+    addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
+  )
+
 // Aggregate all projects
 
 lazy val root: Project = project
@@ -155,5 +169,6 @@ lazy val root: Project = project
     playSqlModule,
     catsEffectsIOModule,
     sampleAppExample,
-    todoAppExample
+    todoAppExample,
+    todoAppHttp4sExample
   )
