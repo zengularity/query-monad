@@ -8,6 +8,8 @@ object Dependencies {
   lazy val anorm = "org.playframework.anorm" %% "anorm" % "2.6.2"
 
   lazy val cats = "org.typelevel" %% "cats-core" % "1.4.0"
+  
+  lazy val catsEffect = "org.typelevel" %% "cats-effect" % "1.0.0"
 
   lazy val h2 = "com.h2database" % "h2" % "1.4.197"
 

@@ -88,6 +88,16 @@ lazy val core = (project in file("core"))
     )
   )
 
+lazy val catsEffectsIOModule = (project in file("modules/cats-effect-io"))
+  .settings(commonSettings)
+  .settings(
+    name := "query-cats-effect-io",
+    libraryDependencies ++= Seq(
+      Dependencies.catsEffect,
+    )
+  )
+  .dependsOn(core % "test->test;compile->compile")
+
 lazy val playSqlModule = (project in file("modules/play-sql"))
   .settings(commonSettings)
   .settings(
