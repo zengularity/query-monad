@@ -31,12 +31,12 @@ def scalacOptionsVersion(scalaVersion: String) = {
     "-Xsource:2.12" // See https://github.com/scala/scala/releases/tag/v2.11.11
   )
   val v212Options = Seq(
-    "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
+    "-Ywarn-extra-implicit" // Warn when more than one implicit parameter section is defined.
   )
-  
+
   CrossVersion.partialVersion(scalaVersion) match {
     case Some((2L, 11L)) => defaultOptions ++ v211Options
-    case _ => defaultOptions ++ v212Options
+    case _               => defaultOptions ++ v212Options
   }
 }
 
@@ -81,7 +81,7 @@ lazy val core = (project in file("core"))
       name := "query-core",
       libraryDependencies ++= Seq(
         Dependencies.acolyte % Test,
-        Dependencies.anorm % Test,
+        Dependencies.anorm   % Test,
         Dependencies.cats,
         Dependencies.specs2 % Test
       )
@@ -94,12 +94,12 @@ lazy val playSqlModule = (project in file("modules/play-sql"))
     name := "query-play-sql",
     libraryDependencies ++= Seq(
       jdbc,
-      evolutions % Test,
-      logback % Test,
-      Dependencies.acolyte % Test,
+      evolutions               % Test,
+      logback                  % Test,
+      Dependencies.acolyte     % Test,
       Dependencies.acolytePlay % Test,
-      Dependencies.anorm % Test,
-      Dependencies.h2 % Test,
+      Dependencies.anorm       % Test,
+      Dependencies.h2          % Test,
       Dependencies.scalaLogging,
       Dependencies.specs2 % Test
     )

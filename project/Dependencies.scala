@@ -10,7 +10,7 @@ object Dependencies {
   lazy val cats = "org.typelevel" %% "cats-core" % "1.4.0"
 
   lazy val h2 = "com.h2database" % "h2" % "1.4.197"
-  
+
   lazy val postgres = "org.postgresql" % "postgresql" % "42.2.5"
 
   lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.0"

@@ -7,6 +7,6 @@ jdk:
   - oraclejdk8
 cache:
   directories:
-  - $HOME/.ivy2
-  - $HOME/.sbt
+    - $HOME/.ivy2
+    - $HOME/.sbt
 script: ./.ci_scripts/validate.sh
