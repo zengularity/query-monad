@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="x-ua-compatible" content="ie=edge">
 <meta name="description" content="query-monad-code">
-<meta name="generator" content="Paradox, paradox-material-theme=, mkdocs-material=3.0.3">
+<meta name="generator" content="Paradox, paradox-material-theme=0.5.1, mkdocs-material=3.0.3">
 
 <meta name="lang:clipboard.copy" content="Copy to clipboard">
 <meta name="lang:clipboard.copied" content="Copied to clipboard">
@@ -15,16 +15,21 @@
 <meta name="lang:search.result.none" content="No matching documents">
 <meta name="lang:search.result.one" content="1 matching document">
 <meta name="lang:search.result.other" content="# matching documents">
-<meta name="lang:search.tokenizer" content="">
+<meta name="lang:search.tokenizer" content="[\s\-]+">
 
 
 <meta name="description" content="query-monad-code">
-<link rel="shortcut icon" href="">
+<link rel="shortcut icon" href="img/favicon.ico">
 <title>query-monad</title>
 <link rel="stylesheet" href="assets/stylesheets/application.451f80e5.css">
 <link rel="stylesheet" href="lib/material__tabs/dist/mdc.tabs.min.css">
 <link rel="stylesheet" href="lib/prettify/prettify.css">
 <script src="assets/javascripts/modernizr.1aa3b519.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono">
+<style>
+body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}
+code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}
+</style>
 <link rel="stylesheet" href="assets/fonts/font-awesome.css">
 <link rel="stylesheet" href="assets/fonts/material-icons.css">
 <link rel="stylesheet" href="assets/stylesheets/paradox-material-theme.css">
@@ -39,7 +44,7 @@
 <div class="md-flex">
 <div class="md-flex__cell md-flex__cell--shrink">
 <a href="index.html" title="query-monad" class="md-header-nav__button md-logo">
-<img src="" width="24" height="24">
+<i class="md-icon">local_library</i>
 </a>
 </div>
 <div class="md-flex__cell md-flex__cell--shrink">
@@ -50,9 +55,46 @@
 query-monad
 </div>
 </div>
-<form name="search" style="display: none">
-<input type="text" name="query">
+<div class="md-flex__cell md-flex__cell--shrink">
+<label class="md-icon md-icon--search md-header-nav__button" for="__search"></label>
+<div class="md-search" data-md-component="search" role="dialog">
+<label class="md-search__overlay" for="__search"></label>
+<div class="md-search__inner" role="search">
+<form class="md-search__form" name="search">
+<input type="text" class="md-search__input" name="query" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="query" data-md-state="active">
+<label class="md-icon md-search__icon" for="__search"></label>
+<button type="reset" class="md-icon md-search__icon" data-md-component="reset" tabindex="-1">&#xE5CD;</button>
 </form>
+<div class="md-search__output">
+<div class="md-search__scrollwrap" data-md-scrollfix>
+<div class="md-search-result" data-md-component="result">
+<div class="md-search-result__meta">
+Type to start searching
+</div>
+<ol class="md-search-result__list"></ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="md-flex__cell md-flex__cell--shrink">
+<div class="md-header-nav__source">
+<a href="https://github.com/zengularity/query-monad"
+title="Go to repository"
+class="md-source"
+data-md-source="github">
+<div class="md-source__icon">
+<i class="fa fa-github"></i>
+</div>
+<div class="md-source__repository">
+zengularity/query-monad
+</div>
+</a>
+
+</div>
+</div>
 </div>
 </nav>
 </header>
@@ -67,12 +109,26 @@ query-monad
 <label class="md-nav__title md-nav__title--site" for="drawer">
 <a href="index.html" title="query-monad" class="md-nav__button md-logo">
 <span class="md-nav__button md-logo">
-<img src="" width="24" height="24">
+<i class="md-icon">local_library</i>
 </a>
 <a href="index.html" title="query-monad">
 query-monad
 </a>
 </label>
+<div class="md-nav__source">
+<a href="https://github.com/zengularity/query-monad"
+title="Go to repository"
+class="md-source"
+data-md-source="github">
+<div class="md-source__icon">
+<i class="fa fa-github"></i>
+</div>
+<div class="md-source__repository">
+zengularity/query-monad
+</div>
+</a>
+
+</div>
 <ul>
 </ul>
 <nav class="md-nav md-nav--secondary">
