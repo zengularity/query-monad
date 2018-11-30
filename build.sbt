@@ -82,8 +82,27 @@ lazy val todoAppExample = (project in file("examples/todo-app"))
   .dependsOn(core, playSqlModule)
 
 // Aggregate all projects
-
 lazy val root: Project = project
   .in(file("."))
   .aggregate(core, playSqlModule, sampleAppExample, todoAppExample)
   .settings(Publish.skipSettings)
+
+// sbt-release
+releaseCrossBuild := true
+releaseProcess := {
+  import ReleaseTransformations._
+
+  Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    runClean,
+    runTest,
+    setReleaseVersion,
+    commitReleaseVersion,
+    tagRelease,
+    releaseStepCommandAndRemaining("publish"), // the default step 'publishArtifacts' ignores the 'publish / skip := true' key...
+    setNextVersion,
+    commitNextVersion,
+    pushChanges
+  )
+}
