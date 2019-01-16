@@ -15,6 +15,7 @@ import com.zengularity.querymonad.module.sql.{
   SqlQueryRunner,
   SqlQueryT
 }
+import com.zengularity.querymonad.module.future.implicits._
 import com.zengularity.querymonad.module.playsql.database.WithPlayTransaction
 
 class AppComponents(context: Context)

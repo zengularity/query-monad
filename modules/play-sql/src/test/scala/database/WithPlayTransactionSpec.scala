@@ -6,6 +6,7 @@ import anorm._
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 
+import com.zengularity.querymonad.module.future.implicits._
 import com.zengularity.querymonad.module.sql.SqlQuery
 import com.zengularity.querymonad.test.module.playsql.utils.WithPlayTransactionUseCases._
 

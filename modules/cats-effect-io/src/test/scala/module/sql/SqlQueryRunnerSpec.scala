@@ -1,4 +1,4 @@
-package com.zengularity.querymonad.test.module.sql
+package module.sql
 
 import acolyte.jdbc.{
   AcolyteDSL,
@@ -6,66 +6,66 @@ import acolyte.jdbc.{
   QueryExecution,
   QueryResult => AcolyteQueryResult
 }
-import org.specs2.concurrent.ExecutionEnv
+import cats.effect.IO
 import org.specs2.mutable.Specification
 
+import com.zengularity.querymonad.module.catsio.sql.WithSqlConnectionIO
+import com.zengularity.querymonad.module.catsio.implicits._
 import com.zengularity.querymonad.module.sql.{
   SqlQuery,
   SqlQueryRunner,
   SqlQueryT
 }
-import com.zengularity.querymonad.module.future.implicits._
-import com.zengularity.querymonad.module.sql.future.WithSqlConnectionF
+import com.zengularity.querymonad.test.module.catsio.sql.utils.SqlConnectionFactory
 import com.zengularity.querymonad.test.module.sql.models.{Material, Professor}
-import com.zengularity.querymonad.test.module.sql.utils.SqlConnectionFactory
 
-class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
+class SqlQueryRunnerIOSpec extends Specification {
 
-  "SqlQueryRunner" should {
+  "SqlQueryRunnerIO" should {
     // execute lift Queries
     "return integer value lift in Query using pure" in {
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = SqlQuery.pure(1)
 
-      runner(query) aka "material" must beTypedEqualTo(1).await
+      runner(query).unsafeRunSync() aka "material" must beTypedEqualTo(1)
     }
 
     "return optional value lift in Query using liftF" in {
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = SqlQueryT.liftF(Seq(1))
 
-      runner(query) aka "material" must beTypedEqualTo(Seq(1)).await
+      runner(query).unsafeRunSync() aka "material" must beTypedEqualTo(Seq(1))
     }
 
     // execute single query
     "retrieve professor with id 1" in {
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(Professor.resultSet)
       val runner = SqlQueryRunner(withSqlConnection)
       val result = runner(Professor.fetchProfessor(1)).map(_.get)
 
-      result aka "professor" must beTypedEqualTo(
+      result.unsafeRunSync() aka "professor" must beTypedEqualTo(
         Professor(1, "John Doe", 35, 1)
-      ).await
+      )
     }
 
     "retrieve material with id 1" in {
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(Material.resultSet)
       val runner = SqlQueryRunner(withSqlConnection)
       val result = runner(Material.fetchMaterial(1)).map(_.get)
 
-      result aka "material" must beTypedEqualTo(
+      result.unsafeRunSync() aka "material" must beTypedEqualTo(
         Material(1, "Computer Science", 20, "Beginner")
-      ).await
+      )
     }
 
     "not retrieve professor with id 2" in {
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(AcolyteQueryResult.Nil)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
@@ -73,7 +73,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         professor <- Professor.fetchProfessor(2)
       } yield professor
 
-      runner(query) aka "material" must beNone.await
+      runner(query).unsafeRunSync() aka "material" must beNone
     }
 
     // execute composed queries into a single transaction
@@ -88,7 +88,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         case _ =>
           AcolyteQueryResult.Nil
       }
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(handler)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
@@ -96,10 +96,11 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         material  <- Material.fetchMaterial(professor.material).map(_.get)
       } yield (professor, material)
 
-      runner(query) aka "professor and material" must beTypedEqualTo(
+      runner(query)
+        .unsafeRunSync() aka "professor and material" must beTypedEqualTo(
         Tuple2(Professor(1, "John Doe", 35, 1),
                Material(1, "Computer Science", 20, "Beginner"))
-      ).await
+      )
     }
 
     "not retrieve professor with id 1 and no material" in {
@@ -110,7 +111,7 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         case _ =>
           AcolyteQueryResult.Nil
       }
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(handler)
       val runner = SqlQueryRunner(withSqlConnection)
       val query = for {
@@ -120,35 +121,30 @@ class SqlQueryRunnerSpec(implicit ee: ExecutionEnv) extends Specification {
         )
       } yield (professor, material)
 
-      runner(query) aka "professor and material" must beNone.await
+      runner(query).unsafeRunSync() aka "professor and material" must beNone
     }
 
     // execute async queries
     "retrieve int value fetch in an async context" in {
-      import scala.concurrent.Future
-      import scala.concurrent.duration._
       import anorm.{SQL, SqlParser}
       import acolyte.jdbc.RowLists
       import acolyte.jdbc.Implicits._
 
       val queryResult: AcolyteQueryResult =
         (RowLists.rowList1(classOf[Int] -> "res").append(5))
-      val withSqlConnection: WithSqlConnectionF =
+      val withSqlConnection: WithSqlConnectionIO =
         SqlConnectionFactory.withSqlConnection(queryResult)
       val runner = SqlQueryRunner(withSqlConnection)
       val query =
         SqlQueryT { implicit connection =>
-          Future {
+          IO {
             Thread.sleep(1000) // to simulate a slow-down
             SQL("SELECT 5 as res")
               .as(SqlParser.int("res").single)
           }
         }
 
-      runner(query) aka "result" must beTypedEqualTo(5).await(
-        retries = 1,
-        timeout = 2.seconds
-      )
+      runner(query).unsafeRunSync() aka "result" must beTypedEqualTo(5)
     }
   }
 

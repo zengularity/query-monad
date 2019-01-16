@@ -7,7 +7,7 @@ import play.api.db.{DBComponents, HikariCPComponents}
 import play.api.routing.Router
 import router.Routes
 
-import com.zengularity.querymonad.module.sql.{SqlQueryRunner}
+import com.zengularity.querymonad.module.sql.future.SqlQueryRunnerF
 import com.zengularity.querymonad.module.playsql.database.WithPlayTransaction
 import com.zengularity.querymonad.examples.todoapp.controller.{
   TodoController,
@@ -28,7 +28,7 @@ class AppComponents(context: Context)
 
   val db = dbApi.database("default")
 
-  val queryRunner = SqlQueryRunner(new WithPlayTransaction(db))
+  val queryRunner = SqlQueryRunnerF(new WithPlayTransaction(db))
 
   // Stores
   val userStore: UserStore = new UserStore()

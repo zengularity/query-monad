@@ -2,8 +2,8 @@ package com.zengularity.querymonad.module
 
 import java.sql.Connection
 
-// import scala.concurrent.ExecutionContext
 import scala.language.higherKinds
+import scala.concurrent.Future
 
 import cats.Applicative
 
@@ -60,13 +60,24 @@ package object sql {
   type SqlQueryE[A, Err] = QueryE[Connection, A, Err]
 
   // Query runner aliases
-  type WithSqlConnection = WithResource[Connection]
+  type WithSqlConnection[F[_]] = WithResource[F, Connection]
 
-  type SqlQueryRunner = QueryRunner[Connection]
+  type SqlQueryRunner[F[_]] = QueryRunner[F, Connection]
 
   object SqlQueryRunner {
-    def apply(wc: WithSqlConnection): SqlQueryRunner =
-      QueryRunner[Connection](wc)
+    def apply[F[_]](wc: WithSqlConnection[F]): SqlQueryRunner[F] =
+      QueryRunner[F, Connection](wc)
+  }
+
+  object future {
+    type WithSqlConnectionF = WithSqlConnection[Future]
+
+    type SqlQueryRunnerF = SqlQueryRunner[Future]
+
+    object SqlQueryRunnerF {
+      def apply(wc: WithSqlConnectionF): SqlQueryRunnerF =
+        SqlQueryRunner(wc)
+    }
   }
 
 }
