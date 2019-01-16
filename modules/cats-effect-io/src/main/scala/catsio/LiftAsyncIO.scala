@@ -2,20 +2,21 @@ package com.zengularity.querymonad.module.catsio
 
 import scala.language.higherKinds
 
-import cats.effect.IO
+import cats.effect.{Async, IO}
 
+import com.zengularity.querymonad.core.database.WithResource
 import com.zengularity.querymonad.core.database.LiftAsync
 
 trait LiftAsyncIO extends LowPriority {
 
-  implicit def ioOut[A]: LiftAsync.Aux[IO, IO, A, A] =
-    new LiftAsync[IO, IO, A] {
+  implicit def ioOut[F[_]: Async, A]: LiftAsync.Aux[F, F, A, A] =
+    new LiftAsync[F, F, A] {
       type Outer = A
 
       def apply[In](
-          loaner: WithResourceIO[In],
-          f: In => IO[A]
-      ): IO[Outer] = loaner(f)
+          loaner: WithResource[F, In],
+          f: In => F[A]
+      ): F[Outer] = loaner(f)
 
       override val toString = "ioOut"
     }

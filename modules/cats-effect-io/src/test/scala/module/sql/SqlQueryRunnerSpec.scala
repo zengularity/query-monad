@@ -7,20 +7,21 @@ import acolyte.jdbc.{
   QueryResult => AcolyteQueryResult
 }
 import cats.effect.IO
-import com.zengularity.querymonad.module.catsio.sql.WithSqlConnectionIO
 import org.specs2.mutable.Specification
+
+import com.zengularity.querymonad.module.catsio.sql.WithSqlConnectionIO
+import com.zengularity.querymonad.module.catsio.implicits._
 import com.zengularity.querymonad.module.sql.{
   SqlQuery,
   SqlQueryRunner,
   SqlQueryT
 }
 import com.zengularity.querymonad.test.module.catsio.sql.utils.SqlConnectionFactory
-import com.zengularity.querymonad.module.catsio.implicits._
 import com.zengularity.querymonad.test.module.sql.models.{Material, Professor}
 
-class SqlQueryRunnerSpec extends Specification {
+class SqlQueryRunnerIOSpec extends Specification {
 
-  "SqlQueryRunner" should {
+  "SqlQueryRunnerIO" should {
     // execute lift Queries
     "return integer value lift in Query using pure" in {
       val withSqlConnection: WithSqlConnectionIO =

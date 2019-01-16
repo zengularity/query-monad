@@ -92,9 +92,7 @@ lazy val catsEffectsIOModule = (project in file("modules/cats-effect-io"))
   .settings(commonSettings)
   .settings(
     name := "query-cats-effect-io",
-    libraryDependencies ++= Seq(
-      Dependencies.catsEffect,
-    )
+    libraryDependencies ++= Seq(Dependencies.catsEffect)
   )
   .dependsOn(core % "test->test;compile->compile")
 
@@ -152,4 +150,10 @@ lazy val todoAppExample = (project in file("examples/todo-app"))
 
 lazy val root: Project = project
   .in(file("."))
-  .aggregate(core, playSqlModule, sampleAppExample, todoAppExample)
+  .aggregate(
+    core,
+    playSqlModule,
+    catsEffectsIOModule,
+    sampleAppExample,
+    todoAppExample
+  )
