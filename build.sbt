@@ -2,8 +2,8 @@ name := "query-monad-code"
 
 version := "1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "2.12.7"
-ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.7")
+ThisBuild / scalaVersion := "2.12.10"
+ThisBuild / crossScalaVersions := Seq("2.11.12", "2.12.10")
 
 def scalacOptionsVersion(scalaVersion: String) = {
   val defaultOptions = Seq(
