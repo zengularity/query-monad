@@ -7,9 +7,9 @@ object Dependencies {
 
   lazy val anorm = "org.playframework.anorm" %% "anorm" % "2.6.2"
 
-  lazy val cats = "org.typelevel" %% "cats-core" % "1.4.0"
+  lazy val cats = "org.typelevel" %% "cats-core" % "1.6.1"
 
-  lazy val h2 = "com.h2database" % "h2" % "1.4.197"
+  lazy val h2 = "com.h2database" % "h2" % "1.4.199"
 
   lazy val postgres = "org.postgresql" % "postgresql" % "42.2.5"
 
