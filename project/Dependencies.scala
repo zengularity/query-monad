@@ -7,7 +7,7 @@ object Dependencies {
 
   lazy val anorm = "org.playframework.anorm" %% "anorm" % "2.6.2"
 
-  lazy val cats = "org.typelevel" %% "cats-core" % "1.6.1"
+  lazy val cats = "org.typelevel" %% "cats-core" % "2.0.0"
 
   lazy val h2 = "com.h2database" % "h2" % "1.4.200"
 
@@ -15,7 +15,7 @@ object Dependencies {
 
   lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
-  lazy val specs2 = "org.specs2" %% "specs2-core" % "4.3.6"
+  lazy val specs2 = "org.specs2" %% "specs2-core" % "4.8.1"
 
   lazy val jbcrypt = "org.mindrot" % "jbcrypt" % "0.4"
 }
