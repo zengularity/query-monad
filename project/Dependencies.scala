@@ -15,7 +15,7 @@ object Dependencies {
 
   lazy val scalaLogging = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
-  lazy val specs2 = "org.specs2" %% "specs2-core" % "4.9.1"
+  lazy val specs2 = "org.specs2" %% "specs2-core" % "4.9.2"
 
   lazy val jbcrypt = "org.mindrot" % "jbcrypt" % "0.4"
 }
