@@ -5,7 +5,7 @@ object Dependencies {
 
   lazy val acolytePlay = "org.eu.acolyte" %% "play-jdbc" % "1.0.54"
 
-  lazy val anorm = "org.playframework.anorm" %% "anorm" % "2.6.5"
+  lazy val anorm = "org.playframework.anorm" %% "anorm" % "2.6.8"
 
   lazy val cats = "org.typelevel" %% "cats-core" % "2.0.0"
 
