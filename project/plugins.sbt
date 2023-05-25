@@ -1,4 +1,4 @@
-addSbtPlugin("com.geirsson"    % "sbt-scalafmt"    % "1.5.1")
+addSbtPlugin("org.scalameta"    % "sbt-scalafmt"    % "2.5.0")
 addSbtPlugin("org.wartremover" % "sbt-wartremover" % "2.4.5")
 
 // The Play plugin, used for the play-sql module
