@@ -9,7 +9,7 @@ object Dependencies {
 
   lazy val cats = "org.typelevel" %% "cats-core" % "2.0.0"
 
-  lazy val h2 = "com.h2database" % "h2" % "1.4.200"
+  lazy val h2 = "com.h2database" % "h2" % "2.2.222"
 
   lazy val postgres = "org.postgresql" % "postgresql" % "42.2.10"
 
